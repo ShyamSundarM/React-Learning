@@ -1,26 +1,25 @@
-import { BaseSyntheticEvent, Dispatch, SetStateAction, useState } from "react";
+import { BaseSyntheticEvent, useContext } from "react";
 import styles from "./Input.module.css";
+import { type } from "os";
+import { TableInputContext } from "../context/table-input-context";
 
-export interface Form {
+export type Form = {
   number: number;
   till: number;
-}
+};
 
-interface Props {
-  SendDataToTable: (formData: Form) => void;
-}
-
-const Input = (props: Props) => {
-  const [formData, setFormData] = useState<Form>({ number: 0, till: 0 });
+const Input = () => {
+  const tableCtx = useContext(TableInputContext);
   function onInputDataChange(event: BaseSyntheticEvent) {
-    setFormData((prev: Form) => {
-      return { ...prev, [event.target.name]: +event.target.value } as Form;
-    });
+    tableCtx.formDataInputChange(event);
   }
   function onFormSubmit(event: BaseSyntheticEvent) {
     event.preventDefault();
-    if (formData.number !== 0 && formData.till !== 0) {
-      props.SendDataToTable(formData);
+    if (tableCtx.formData.number !== 0 && tableCtx.formData.till !== 0) {
+      tableCtx.setResultData({
+        number: tableCtx.formData.number,
+        till: tableCtx.formData.till,
+      });
     } else {
       alert("Please fill all fields");
     }
@@ -35,7 +34,7 @@ const Input = (props: Props) => {
           placeholder="Enter number"
           onChange={onInputDataChange}
           name="number"
-          value={formData.number || ""}
+          value={tableCtx.formData.number || ""}
         />
         <input
           className="form-control"
@@ -43,7 +42,7 @@ const Input = (props: Props) => {
           placeholder="Till ?"
           onChange={onInputDataChange}
           name="till"
-          value={formData.till || ""}
+          value={tableCtx.formData.till || ""}
         />
       </div>
       <button className="btn btn-primary generateBtn" type="submit">

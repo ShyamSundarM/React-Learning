@@ -1,20 +1,15 @@
 import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap/dist/js/bootstrap.bundle";
-import React, { useState } from "react";
-import logo from "./logo.svg";
 import styles from "./App.module.css";
-import Input, { Form } from "./components/Input";
-import Table from "./components/Table";
+import TableRoot from "./components/TableRoot";
+import TableInputContextProvider from "./context/table-input-context";
 
 function App() {
-  const [formData, setFormData] = useState<Form>();
-  function SendDataToTable(formData: Form) {
-    setFormData((prev) => formData);
-  }
   return (
     <div className={styles.container}>
-      <Input SendDataToTable={SendDataToTable} />
-      {formData && <Table Data={formData} />}
+      <TableInputContextProvider>
+        <TableRoot />
+      </TableInputContextProvider>
     </div>
   );
 }

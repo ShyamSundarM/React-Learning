@@ -1,21 +1,22 @@
+import { type } from "os";
 import { Form } from "./Input";
 import styles from "./Table.module.css";
+import { useContext } from "react";
+import { TableInputContext } from "../context/table-input-context";
 
-interface Props {
-  Data: Form;
-}
-interface ResData {
+type ResData = {
   number: number;
   factor: number;
   result: number;
-}
-const Table = (props: Props) => {
+};
+const Table = () => {
+  const tableCtx = useContext(TableInputContext);
   var resArray: Array<ResData> = [];
-  for (let i = 1; i <= props.Data.till; i++) {
+  for (let i = 1; i <= tableCtx.resData.till; i++) {
     resArray.push({
-      number: props.Data.number,
+      number: tableCtx.resData.number,
       factor: i,
-      result: props.Data.number * i,
+      result: tableCtx.resData.number * i,
     });
   }
 
