@@ -1,0 +1,25 @@
+.plus,
+.minus {
+  border: none;
+  padding: 5px 8px;
+  background-color: rgb(205, 223, 175);
+  font-size: 25px;
+}
+
+.plus:hover,
+.minus:hover {
+  background-color: brown;
+}
+
+.container {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  border-radius: 15px;
+  background-color: rgb(205, 223, 175);
+  overflow: hidden;
+}
+
+.chosenCount {
+  background-color: rgb(205, 223, 175);
+}

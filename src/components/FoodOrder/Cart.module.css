@@ -1,0 +1,24 @@
+.CartText {
+  color: #0e2343;
+}
+
+.count {
+  color: white;
+  background-color: brown;
+  border-radius: 10px;
+  font-weight: bold;
+  padding: 3px 6px;
+  font-size: 14px;
+}
+
+.innerContainer {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.container {
+  background-color: rgb(145, 162, 236);
+  border-radius: 10px;
+  padding: 5px 10px;
+}
