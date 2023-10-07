@@ -1,0 +1,48 @@
+.image {
+  width: 150px;
+  height: 150px;
+  border-radius: 10px;
+}
+
+.container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 12px 10px;
+  padding: 8px 14px;
+  border-radius: 10px;
+  background-color: aliceblue;
+}
+
+.innerContainer {
+  display: flex;
+}
+.details {
+  margin-left: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.name {
+  font-weight: bold;
+  color: black;
+}
+
+.price {
+  font-size: 14px;
+  color: black;
+}
+.count {
+  color: black;
+  font-size: 24px;
+  margin-bottom: -6px;
+}
+
+.itemSum {
+  font-weight: bold;
+  color: greenyellow;
+  padding: 10px;
+  border-radius: 10px;
+  background-color: brown;
+}

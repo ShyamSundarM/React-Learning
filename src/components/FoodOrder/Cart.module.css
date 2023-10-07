@@ -21,4 +21,44 @@
   background-color: rgb(145, 162, 236);
   border-radius: 10px;
   padding: 5px 10px;
+  cursor: pointer;
+}
+
+.container:hover {
+  background-color: rgb(235, 235, 153);
+}
+.ModalContainer {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: rgb(255, 255, 255);
+  outline: 0;
+  width: 60%;
+  height: auto;
+  padding: 10px 8px;
+  background-color: rgb(247, 233, 207);
+  border-radius: 10px;
+}
+.modalTitle {
+  font-size: 28px;
+  color: #0e2343;
+}
+.noItems {
+  color: blue;
+  font-size: 18px;
+}
+.netItemAmount {
+  float: right;
+  margin-right: 20px;
+  margin-bottom: 15px;
+  font-size: 20px;
+  color: blue;
+}
+.itemSum {
+  font-weight: bold;
+  color: greenyellow;
+  padding: 10px;
+  border-radius: 10px;
+  background-color: brown;
 }

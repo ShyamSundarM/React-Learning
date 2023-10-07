@@ -10,7 +10,11 @@ type Props = {
 export default function Counter(this: any, props: Props) {
   const foodCtx = useContext(FoodContext);
   function onAddSubClick(isAdd: boolean) {
-    foodCtx.incDecFoodItem(props.id, isAdd);
+    var resCount = props.count;
+    isAdd ? resCount++ : resCount--;
+    if (resCount >= 0) {
+      foodCtx.incDecFoodItem(props.id, isAdd);
+    }
   }
   return (
     <div className={styles.container}>
