@@ -27,7 +27,11 @@ export default function Cart() {
           <div className={styles.count}>{count}</div>
         </div>
       </div>
-      <Modal open={modalOpen} onClose={() => setModalOpen((prev) => !prev)}>
+      <Modal
+        open={modalOpen}
+        onClose={() => setModalOpen((prev) => !prev)}
+        BackdropProps={{ style: { backgroundColor: "rgba(0,0,0,0.8)" } }}
+      >
         <div className={styles.ModalContainer}>
           <div className={styles.modalTitle}>Your Cart Summary</div>
           <Divider color="rgb(91, 86, 86);" className="mt-2" />
