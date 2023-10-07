@@ -34,7 +34,7 @@
   transform: translate(-50%, -50%);
   color: rgb(255, 255, 255);
   outline: 0;
-  width: 85%;
+  max-width: 90%;
   height: auto;
   padding: 10px 8px;
   background-color: rgb(247, 233, 207);

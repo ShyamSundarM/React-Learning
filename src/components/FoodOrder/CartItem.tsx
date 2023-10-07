@@ -25,8 +25,10 @@ export default function CartItem(props: Props) {
           </div>
         </div>
       </div>
-      <Counter id={props.id} count={props.count} />
-      <div className={styles.itemSum}>{props.count * props.price}₹</div>
+      <div className={styles.secContainer}>
+        <Counter id={props.id} count={props.count} />
+        <div className={styles.itemSum}>{props.count * props.price}₹</div>
+      </div>
     </div>
   );
 }
