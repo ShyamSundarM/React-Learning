@@ -9,7 +9,7 @@ export default function FoodOrderRoot() {
   useEffect(() => {
     async function get() {
       var foodData = (
-        await axios.get<Array<FoodItem>>("http://rproj.somee.com/foods")
+        await axios.get<Array<FoodItem>>("https://rproj.somee.com/foods")
       ).data; //http://rproj.somee.com/foods
       console.log(foodData);
       foodData = foodData.map((item) => {
