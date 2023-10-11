@@ -1,14 +1,16 @@
 import { FoodContext } from "../../context/food-context";
 import styles from "./Cart.module.css";
 import { BiCartAlt } from "react-icons/bi";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Divider, Modal } from "@mui/material";
 import CartItem from "./CartItem";
 
 export default function Cart() {
   const foodCtx = useContext(FoodContext);
+  const { foodItems } = foodCtx;
   const cartData = foodCtx.foodItems.filter((f) => f.chosenCount > 0);
   const [modalOpen, setModalOpen] = useState(false);
+  const [bumpAnimShow, setBumpAnimShow] = useState(false);
   const count = foodCtx.foodItems.reduce((total, f) => {
     return total + f.chosenCount;
   }, 0);
@@ -18,9 +20,20 @@ export default function Cart() {
   function onCartClick() {
     setModalOpen((prev) => !prev);
   }
+  useEffect(() => {
+    if (foodItems.length === 0) {
+      return;
+    }
+    setBumpAnimShow(true);
+    const timer = setTimeout(() => setBumpAnimShow(false), 300);
+    return () => clearTimeout(timer);
+  }, [foodItems]);
+  const rootClasses = `${styles.container} ${
+    bumpAnimShow ? styles.bumpAnim : ""
+  }`;
   return (
     <>
-      <div className={styles.container} onClick={onCartClick}>
+      <div className={rootClasses} onClick={onCartClick}>
         <div className={styles.innerContainer}>
           <BiCartAlt size={20} color="#0e2343" />
           <div className={styles.CartText}>Cart</div>

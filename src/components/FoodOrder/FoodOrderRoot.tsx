@@ -13,7 +13,6 @@ export default function FoodOrderRoot() {
       var foodData = (
         await axios.get<Array<FoodItem>>("https://rproj.somee.com/foods")
       ).data;
-      console.log(foodData);
       foodData = foodData.map((item) => {
         return { ...item, chosenCount: 0 };
       });

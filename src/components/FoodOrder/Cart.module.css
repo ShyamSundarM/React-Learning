@@ -24,6 +24,10 @@
   cursor: pointer;
 }
 
+.bumpAnim {
+  animation: bump 300ms;
+}
+
 .container:hover {
   background-color: rgb(235, 235, 153);
 }
@@ -63,4 +67,16 @@
   padding: 10px;
   border-radius: 10px;
   background-color: brown;
+}
+
+@keyframes bump {
+  0% {
+    scale: 1;
+  }
+  50% {
+    scale: 2 50%;
+  }
+  100% {
+    scale: 1;
+  }
 }
