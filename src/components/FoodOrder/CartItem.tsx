@@ -1,6 +1,9 @@
 import styles from "./CartItem.module.css";
 import { RxCross2 } from "react-icons/rx";
 import Counter from "./Counter";
+import { useContext } from "react";
+import { FoodContext } from "../../context/food-context";
+import { Skeleton } from "@mui/material";
 
 type Props = {
   id: number;
@@ -10,10 +13,19 @@ type Props = {
   price: number;
 };
 export default function CartItem(props: Props) {
+  const { dataLoaded } = useContext(FoodContext);
   return (
     <div className={styles.container}>
       <div className={styles.innerContainer}>
-        <img src={props.image} className={styles.image} />
+        {dataLoaded ? (
+          <img src={props.image} className={styles.image} />
+        ) : (
+          <Skeleton
+            variant="rounded"
+            className={styles.image}
+            animation="wave"
+          />
+        )}
         <div className={styles.details}>
           <div>
             <div className={styles.name}>{props.name}</div>

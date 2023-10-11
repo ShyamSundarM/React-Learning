@@ -3,11 +3,12 @@ import Content from "./Content";
 import Header from "./Header";
 import axios from "axios";
 import { FoodContext, FoodItem } from "../../context/food-context";
-import { Backdrop, CircularProgress } from "@mui/material";
+import { Skeleton } from "@mui/material";
+import RootSkeleton from "./RootSkeleton";
 
 export default function FoodOrderRoot() {
   const foodCtx = useContext(FoodContext);
-  const [dataLoaded, setDataLoaded] = useState(false);
+
   useEffect(() => {
     async function get() {
       var foodData = (
@@ -17,18 +18,21 @@ export default function FoodOrderRoot() {
         return { ...item, chosenCount: 0 };
       });
       foodCtx.setAllFoodItems(foodData);
-      setDataLoaded((prev) => true);
+      foodCtx.setDataLoadedFlag(true);
     }
     get();
   }, []);
   return (
     <>
-      <Backdrop open={!dataLoaded} sx={{ color: "#13a5ff" }}>
-        <CircularProgress color="inherit" />
-      </Backdrop>
-
       <Header />
-      <Content />
+
+      {foodCtx.dataLoaded ? (
+        <>
+          <Content />
+        </>
+      ) : (
+        <RootSkeleton />
+      )}
     </>
   );
 }
