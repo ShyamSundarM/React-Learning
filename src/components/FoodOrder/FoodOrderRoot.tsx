@@ -5,9 +5,12 @@ import axios from "axios";
 import { FoodContext, FoodItem } from "../../context/food-context";
 import { Skeleton } from "@mui/material";
 import RootSkeleton from "./RootSkeleton";
+import useCounter from "./hooks/counter-hook";
 
 export default function FoodOrderRoot() {
   const foodCtx = useContext(FoodContext);
+  const counter1 = useCounter(0, 1000);
+  const counter2 = useCounter(20, 500);
 
   useEffect(() => {
     async function get() {
@@ -25,7 +28,6 @@ export default function FoodOrderRoot() {
   return (
     <>
       <Header />
-
       {foodCtx.dataLoaded ? (
         <>
           <Content />
