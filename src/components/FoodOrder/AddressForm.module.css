@@ -1,0 +1,11 @@
+.form {
+  padding: 8px 4px;
+}
+
+.errorText {
+  color: red;
+}
+
+.formElement {
+  margin-bottom: 10px;
+}

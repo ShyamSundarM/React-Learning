@@ -7,14 +7,14 @@
   outline: 0;
   max-width: 90%;
   max-height: 90%;
-  overflow: scroll;
+  overflow: auto;
   height: auto;
-  padding: 10px 8px;
+  padding: 0px 8px 0px 8px;
   background-color: rgb(247, 233, 207);
   border-radius: 10px;
 }
 .modalTitle {
-  font-size: 28px;
+  font-size: 24px;
   color: #0e2343;
 }
 
@@ -24,18 +24,17 @@
 }
 
 .netItemAmount {
-  float: right;
-  margin-right: 20px;
-  margin-bottom: 15px;
   font-size: 20px;
   color: blue;
+  padding: 8px 0px;
 }
 .itemSum {
   font-weight: bold;
-  color: greenyellow;
-  padding: 10px;
+  display: inline-block;
+  color: rgb(255, 255, 255);
+  padding: 5px 5px;
   border-radius: 10px;
-  background-color: brown;
+  background-color: rgb(107, 136, 255);
 }
 .modalStartAnim {
   animation: slideInFromTop 0.2s ease-in;
@@ -43,21 +42,42 @@
 .modalCloseAnim {
   animation: slideAway 0.2s ease-out;
 }
-
+.modalHeader {
+  position: sticky;
+  top: 0;
+  background-color: rgb(247, 233, 207);
+}
+.footer {
+  position: sticky;
+  bottom: 0;
+  background-color: rgb(247, 233, 207);
+}
+.footerElements {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+.checkOutBtn {
+  align-self: center;
+}
 @keyframes slideInFromTop {
   0% {
-    transform: translateY(-100%);
+    transform: translateY(-20%);
+    opacity: 0;
   }
   100% {
     transform: translateY(0);
+    opacity: 1;
   }
 }
 
 @keyframes slideAway {
   0% {
     transform: translateY(0);
+    opacity: 1;
   }
   100% {
-    transform: translateY(-100%);
+    transform: translateY(-20%);
+    opacity: 0;
   }
 }
