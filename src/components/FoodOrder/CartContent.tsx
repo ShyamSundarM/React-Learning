@@ -4,6 +4,8 @@ import CartItem from "./CartItem";
 import { useContext, useEffect, useState } from "react";
 import { FoodContext } from "../../context/food-context";
 import AddressForm from "./AddressForm";
+import { json } from "stream/consumers";
+import axios from "axios";
 
 type Props = {
   modalOpen: boolean;
@@ -24,7 +26,16 @@ const CartContent = (props: Props) => {
     name: boolean;
     address: boolean;
     phone: boolean;
-  }>();
+  }>({ name: null, address: null, phone: null });
+  const [formValues, setFormValues] = useState<{
+    name: string;
+    address: string;
+    phone: string;
+  }>({
+    name: null,
+    address: null,
+    phone: null,
+  });
   const [formState, setFormState] = useState("cart");
   var content;
   var modalTitle;
@@ -32,6 +43,7 @@ const CartContent = (props: Props) => {
     content = cartData.map((food) => {
       return (
         <CartItem
+          key={food.id}
           id={food.id}
           image={food.image}
           name={food.name}
@@ -47,6 +59,8 @@ const CartContent = (props: Props) => {
         formValid={formValid}
         setFormValid={setFormValid}
         shouldValidate={shouldValidateForm}
+        formValues={formValues}
+        setFormValues={setFormValues}
       />
     );
     modalTitle = "Enter Details";
@@ -72,14 +86,64 @@ const CartContent = (props: Props) => {
       setShouldValidateForm(false);
     }
   }, [shouldValidateForm]);
+  useEffect(() => {
+    if (
+      shouldValidateForm &&
+      formState === "form" &&
+      formValid.name &&
+      formValid.address &&
+      formValid.phone
+    ) {
+      const cartItems = cartData.map((item) => ({
+        id: item.id,
+        count: item.chosenCount,
+      }));
+      const data = {
+        name: formValues.name,
+        address: formValues.address,
+        phone: formValues.phone,
+        netAmount: netItemAmount,
+        cartItems: cartItems,
+      };
+      updateDatabase(data);
+    }
+    async function updateDatabase(data: {
+      name: string;
+      address: string;
+      phone: string;
+      netAmount: number;
+      cartItems: {
+        id: number;
+        count: number;
+      }[];
+    }) {
+      var resp = await axios.post(
+        "https://rproj.somee.com/createOrder",
+        JSON.stringify(data)
+      );
+    }
+  }, [formValid, shouldValidateForm]);
   function checkoutClickHandler() {
     setFormState("form");
   }
   function placeOrderClickHandler() {
     setShouldValidateForm(true);
   }
+  function resetFormState() {
+    setFormValues({
+      name: null,
+      address: null,
+      phone: null,
+    });
+    setFormValid({
+      name: null,
+      address: null,
+      phone: null,
+    });
+  }
   function cancelClickHandler() {
     setFormState("cart");
+    resetFormState();
   }
   return (
     <Modal
