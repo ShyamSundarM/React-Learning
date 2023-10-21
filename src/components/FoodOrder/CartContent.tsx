@@ -6,6 +6,8 @@ import { FoodContext } from "../../context/food-context";
 import AddressForm from "./AddressForm";
 import { json } from "stream/consumers";
 import axios from "axios";
+import { LoadingButton } from "@mui/lab";
+import FoodItem from "./FoodItem";
 
 type Props = {
   modalOpen: boolean;
@@ -22,6 +24,7 @@ const CartContent = (props: Props) => {
   }, 0);
   const [modalAnimClass, setModalAnimClass] = useState(styles.modalStartAnim);
   const [shouldValidateForm, setShouldValidateForm] = useState(false);
+  const [isOrderCreating, setIsOrderCreating] = useState(false);
   const [formValid, setFormValid] = useState<{
     name: boolean;
     address: boolean;
@@ -105,6 +108,7 @@ const CartContent = (props: Props) => {
         netAmount: netItemAmount,
         cartItems: cartItems,
       };
+      //console.log(JSON.stringify(data));
       updateDatabase(data);
     }
     async function updateDatabase(data: {
@@ -117,10 +121,20 @@ const CartContent = (props: Props) => {
         count: number;
       }[];
     }) {
-      var resp = await axios.post(
-        "https://rproj.somee.com/createOrder",
-        JSON.stringify(data)
-      );
+      setIsOrderCreating(true);
+      try {
+        var resp = await axios.post(
+          "https://rproj.somee.com/createOrder",
+          data
+        );
+        if (resp.status === 200) {
+          resetFormState();
+          resetCart();
+        }
+        setIsOrderCreating(false);
+      } catch (e: any) {
+        setIsOrderCreating(false);
+      }
     }
   }, [formValid, shouldValidateForm]);
   function checkoutClickHandler() {
@@ -128,6 +142,10 @@ const CartContent = (props: Props) => {
   }
   function placeOrderClickHandler() {
     setShouldValidateForm(true);
+  }
+  function resetCart() {
+    const data = foodItems.map((item) => ({ ...item, chosenCount: 0 }));
+    foodCtx.setAllFoodItems([...data]);
   }
   function resetFormState() {
     setFormValues({
@@ -174,30 +192,34 @@ const CartContent = (props: Props) => {
                   Total Payable :{" "}
                   <span className={styles.itemSum}>{netItemAmount}₹</span>
                 </div>
-                {formState === "cart" && (
-                  <button
-                    onClick={checkoutClickHandler}
-                    className={`btn btn-success ${styles.checkOutBtn}`}
-                  >
-                    Checkout
-                  </button>
-                )}
-                {formState === "form" && (
-                  <>
+                <div className={styles.footerBtns}>
+                  {formState === "cart" && (
                     <button
-                      onClick={placeOrderClickHandler}
+                      onClick={checkoutClickHandler}
                       className={`btn btn-success ${styles.checkOutBtn}`}
                     >
-                      Place Order
+                      Checkout
                     </button>
-                    <button
-                      onClick={cancelClickHandler}
-                      className={`btn btn-danger ${styles.checkOutBtn}`}
-                    >
-                      Cancel
-                    </button>
-                  </>
-                )}
+                  )}
+                  {formState === "form" && (
+                    <>
+                      <LoadingButton
+                        variant="contained"
+                        loading={isOrderCreating}
+                        onClick={placeOrderClickHandler}
+                        className={`btn btn-success ${styles.checkOutBtn}`}
+                      >
+                        Order
+                      </LoadingButton>
+                      <button
+                        onClick={cancelClickHandler}
+                        className={`btn btn-danger ${styles.checkOutBtn}`}
+                      >
+                        Cancel
+                      </button>
+                    </>
+                  )}
+                </div>
               </div>
             </div>
           </>
