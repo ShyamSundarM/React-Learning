@@ -1,0 +1,36 @@
+.formRoot {
+  width: 30%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-width: 90%;
+  max-height: 90%;
+  background-color: rgb(247, 233, 207);
+  border-radius: 10px;
+  padding: 10px 20px;
+}
+
+.registerLink {
+  cursor: pointer;
+  color: blue;
+}
+
+.animateForm {
+  animation: slideLeftAnim 0.5s ease;
+}
+
+@keyframes slideLeftAnim {
+  0% {
+    transform: translateX(0%);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-20%);
+    opacity: 0;
+  }
+}
+
+.errText {
+  color: red;
+}

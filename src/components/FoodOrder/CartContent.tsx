@@ -130,6 +130,8 @@ const CartContent = (props: Props) => {
         if (resp.status === 200) {
           resetFormState();
           resetCart();
+          setFormState("cart");
+          props.setModalOpen(false);
         }
         setIsOrderCreating(false);
       } catch (e: any) {

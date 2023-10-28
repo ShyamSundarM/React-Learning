@@ -21,3 +21,7 @@ nav {
   position: sticky !important;
   top: 0;
 }
+
+.form-control {
+  margin-bottom: 12px;
+}
