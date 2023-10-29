@@ -11,6 +11,12 @@
   padding: 10px 20px;
 }
 
+@media only screen and (max-width: 600px) {
+  .formRoot {
+    width: 95%;
+  }
+}
+
 .registerLink {
   cursor: pointer;
   color: blue;
