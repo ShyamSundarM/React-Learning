@@ -10,7 +10,17 @@ export default function useInput(validatorFnObj: ValidatorFnObj = null) {
   const lengthRes = !!validatorFnObj.length
     ? validatorFnObj.length(enteredValue)
     : true;
-  const isValid = isEmptyRes && lengthRes;
+  const matchRes = !!validatorFnObj.matchErr
+    ? validatorFnObj.matchErr(enteredValue)
+    : true;
+  const allDigits = !!validatorFnObj.allDigits
+    ? validatorFnObj.allDigits(enteredValue)
+    : true;
+  const userNameRes = !!validatorFnObj.checkUserName
+    ? validatorFnObj.checkUserName(enteredValue)
+    : true;
+  const isValid =
+    isEmptyRes && lengthRes && matchRes && allDigits && userNameRes;
   function valueChangeHandler(event: BaseSyntheticEvent) {
     setEnteredValue(event.target.value);
   }
@@ -25,6 +35,9 @@ export default function useInput(validatorFnObj: ValidatorFnObj = null) {
     errors: {
       isEmpty: isTouched && !isEmptyRes,
       length: isTouched && !lengthRes,
+      matchErr: isTouched && !matchRes,
+      allDigits: isTouched && !allDigits,
+      userNameExists: isTouched && !userNameRes,
     },
     isValid: isValid,
   };

@@ -1,12 +1,15 @@
 import React, { BaseSyntheticEvent, useState } from "react";
 import styles from "./SignInUp.module.css";
 import useInput from "./hooks/useInput";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import { LoadingButton } from "@mui/lab";
 import { Alert, Slide, SlideProps, Snackbar } from "@mui/material";
 export type ValidatorFnObj = {
   isEmpty?: (value: string) => boolean;
   length?: (value: string) => boolean;
+  matchErr?: (value: string) => boolean;
+  allDigits?: (value: string) => boolean;
+  checkUserName?: (value: string) => Promise<boolean>;
 };
 export default function SignInUp() {
   const [formState, setFormState] = useState("login");
@@ -22,8 +25,7 @@ export default function SignInUp() {
   const [isRegistering, setIsRegistering] = useState(false);
   const [snackBarVisible, setSnackBarVisible] = useState(false);
   const [regSnackBarVisible, setRegSnackBarVisible] = useState(false);
-  const [pwdDontMatch, setPwdDontMatch] = useState(false);
-
+  const [isUserNameChecking, setIsUserNameChecking] = useState(false);
   const {
     enteredValue: loginUserName,
     valueChangeHandler: loginUserNameChangeHandler,
@@ -53,14 +55,29 @@ export default function SignInUp() {
     inputBlurHandler: regPhoneNumBlurHandler,
     errors: regPhoneNumErrors,
     isValid: regPhoneNumIsValid,
-  } = useInput({ isEmpty: (value: string) => value.trim() !== "" });
+  } = useInput({
+    isEmpty: (value: string) => value.trim() !== "",
+    allDigits: (value: string) => new RegExp("^[6789]{1}[1-9]{9}$").test(value),
+  });
   const {
     enteredValue: regUserName,
     valueChangeHandler: regUserNameChangeHandler,
     inputBlurHandler: regUserNameBlurHandler,
     errors: regUserNameErrors,
     isValid: regUserNameIsValid,
-  } = useInput({ isEmpty: (value: string) => value.trim() !== "" });
+  } = useInput({
+    isEmpty: (value: string) => value.trim() !== "",
+    checkUserName: async (value: string) => {
+      //setIsUserNameChecking(true);
+      if (value.trim().length === 0) return false;
+      const res = await axios.get<boolean>(
+        "https://rproj.somee.com/isUserNameAvailable/" + value
+      );
+      //setIsUserNameChecking(false);
+      console.log(res.data);
+      return res.data;
+    },
+  });
   const {
     enteredValue: regPwd,
     valueChangeHandler: regPwdChangeHandler,
@@ -74,7 +91,10 @@ export default function SignInUp() {
     inputBlurHandler: regRePwdBlurHandler,
     errors: regRePwdErrors,
     isValid: regRePwdIsValid,
-  } = useInput({ isEmpty: (value: string) => value.trim() !== "" });
+  } = useInput({
+    isEmpty: (value: string) => value.trim() !== "",
+    matchErr: (value: string) => value === regPwd,
+  });
 
   function handleError(ex: any) {
     if (formState === "login") {
@@ -278,6 +298,11 @@ export default function SignInUp() {
             {regPhoneNumErrors.isEmpty && (
               <p className={styles.errText}>Phone Number cannot be empty</p>
             )}
+            {regPhoneNumErrors.allDigits && (
+              <p className={styles.errText}>
+                Phone Number not in correct format
+              </p>
+            )}
             <input
               type="text"
               className={`form-control`}
@@ -312,7 +337,7 @@ export default function SignInUp() {
             {regRePwdErrors.isEmpty && (
               <p className={styles.errText}>This field cannot be empty</p>
             )}
-            {pwdDontMatch && (
+            {regRePwdErrors.matchErr && (
               <p className={styles.errText}>Passwords doesn't match</p>
             )}
             <LoadingButton
