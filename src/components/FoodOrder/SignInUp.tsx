@@ -1,12 +1,21 @@
 import React, { BaseSyntheticEvent, useState } from "react";
 import styles from "./SignInUp.module.css";
 import useInput from "./hooks/useInput";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import { LoadingButton } from "@mui/lab";
-import { Alert, Slide, SlideProps, Snackbar } from "@mui/material";
+import {
+  Alert,
+  CircularProgress,
+  Slide,
+  SlideProps,
+  Snackbar,
+} from "@mui/material";
 export type ValidatorFnObj = {
   isEmpty?: (value: string) => boolean;
   length?: (value: string) => boolean;
+  matchErr?: (value: string) => boolean;
+  regexRequired?: (value: string) => boolean;
+  checkUserName?: (value: string) => Promise<boolean>;
 };
 export default function SignInUp() {
   const [formState, setFormState] = useState("login");
@@ -22,8 +31,7 @@ export default function SignInUp() {
   const [isRegistering, setIsRegistering] = useState(false);
   const [snackBarVisible, setSnackBarVisible] = useState(false);
   const [regSnackBarVisible, setRegSnackBarVisible] = useState(false);
-  const [pwdDontMatch, setPwdDontMatch] = useState(false);
-
+  const [isUserNameChecking, setIsUserNameChecking] = useState(false);
   const {
     enteredValue: loginUserName,
     valueChangeHandler: loginUserNameChangeHandler,
@@ -53,28 +61,56 @@ export default function SignInUp() {
     inputBlurHandler: regPhoneNumBlurHandler,
     errors: regPhoneNumErrors,
     isValid: regPhoneNumIsValid,
-  } = useInput({ isEmpty: (value: string) => value.trim() !== "" });
+  } = useInput({
+    isEmpty: (value: string) => value.trim() !== "",
+    regexRequired: (value: string) =>
+      new RegExp("^[6789]{1}[1-9]{9}$").test(value),
+  });
   const {
     enteredValue: regUserName,
     valueChangeHandler: regUserNameChangeHandler,
     inputBlurHandler: regUserNameBlurHandler,
     errors: regUserNameErrors,
     isValid: regUserNameIsValid,
-  } = useInput({ isEmpty: (value: string) => value.trim() !== "" });
+  } = useInput({
+    isEmpty: (value: string) => value.trim() !== "",
+    checkUserName: async (value: string) => {
+      setIsUserNameChecking(true);
+      const res = await axios.get<boolean>(
+        "https://rproj.somee.com/isUserNameAvailable/" + value
+      );
+      setIsUserNameChecking(false);
+      console.log(res.data);
+      return res.data;
+    },
+    length: (value: string) => value.trim().length > 3,
+  });
   const {
     enteredValue: regPwd,
     valueChangeHandler: regPwdChangeHandler,
     inputBlurHandler: regPwdBlurHandler,
     errors: regPwdErrors,
     isValid: regPwdIsValid,
-  } = useInput({ isEmpty: (value: string) => value.trim() !== "" });
+  } = useInput({
+    isEmpty: (value: string) => value.trim() !== "",
+    regexRequired: (value: string) =>
+      new RegExp("[A-Z]").test(value) &&
+      new RegExp("[a-z]").test(value) &&
+      new RegExp("[0-9]").test(value) &&
+      new RegExp("[.@$%#]").test(value),
+    length: (value: string) =>
+      value.trim().length >= 6 && value.trim().length <= 9,
+  });
   const {
     enteredValue: regRePwd,
     valueChangeHandler: regRePwdChangeHandler,
     inputBlurHandler: regRePwdBlurHandler,
     errors: regRePwdErrors,
     isValid: regRePwdIsValid,
-  } = useInput({ isEmpty: (value: string) => value.trim() !== "" });
+  } = useInput({
+    isEmpty: (value: string) => value.trim() !== "",
+    matchErr: (value: string) => value === regPwd,
+  });
 
   function handleError(ex: any) {
     if (formState === "login") {
@@ -278,17 +314,41 @@ export default function SignInUp() {
             {regPhoneNumErrors.isEmpty && (
               <p className={styles.errText}>Phone Number cannot be empty</p>
             )}
+            {regPhoneNumErrors.regex && (
+              <p className={styles.errText}>
+                Phone Number not in correct format
+              </p>
+            )}
             <input
               type="text"
-              className={`form-control`}
+              className={`form-control ${styles.regUname}`}
               placeholder="User Name"
               onChange={regUserNameChangeHandler}
               onBlur={regUserNameBlurHandler}
               value={regUserName}
             />
+            <div className="unameProgressDiv">
+              {isUserNameChecking && (
+                <CircularProgress size={16} className={styles.unameProgress} />
+              )}
+              {regUserNameErrors.userNameExists !== null &&
+                !regUserNameErrors.userNameExists && (
+                  <p className={styles.errText}>Username already taken</p>
+                )}
+              {regUserNameErrors.userNameExists && (
+                <p className={styles.successText}>UserName available</p>
+              )}
+            </div>
+
             {regUserNameErrors.isEmpty && (
               <p className={styles.errText}>UserName cannot be empty</p>
             )}
+            {regUserNameErrors.length && (
+              <p className={styles.errText}>
+                UserName cannot be less than 4 characters
+              </p>
+            )}
+
             <input
               type="password"
               className={`form-control`}
@@ -299,6 +359,12 @@ export default function SignInUp() {
             />
             {regPwdErrors.isEmpty && (
               <p className={styles.errText}>Password cannot be empty</p>
+            )}
+            {(regPwdErrors.regex || regPwdErrors.length) && (
+              <p className={styles.errText}>
+                Password must contain 1Small, 1Capital and any of .@&$# with
+                length range of 6,9
+              </p>
             )}
 
             <input
@@ -312,7 +378,7 @@ export default function SignInUp() {
             {regRePwdErrors.isEmpty && (
               <p className={styles.errText}>This field cannot be empty</p>
             )}
-            {pwdDontMatch && (
+            {regRePwdErrors.matchErr && (
               <p className={styles.errText}>Passwords doesn't match</p>
             )}
             <LoadingButton
