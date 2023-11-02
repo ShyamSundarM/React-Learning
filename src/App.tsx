@@ -5,7 +5,7 @@ import TableRoot from "./components/TableRoot";
 import TableInputContextProvider from "./context/table-input-context";
 import FoodOrderRoot from "./components/FoodOrder/FoodOrderRoot";
 import FoodContextProvider from "./context/food-context";
-import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import { Route, RouterProvider, createBrowserRouter } from "react-router-dom";
 import SignInUp from "./components/FoodOrder/SignInUp";
 
 const router = createBrowserRouter([
