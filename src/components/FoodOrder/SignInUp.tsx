@@ -195,7 +195,7 @@ export default function SignInUp() {
   async function loginFormSubmitHandler(event: BaseSyntheticEvent) {
     event.preventDefault();
     setLoginStatusData({ message: "", code: 0 });
-    //console.log(loginUserNameIsValid, loginPwdIsValid);
+    console.log(loginUserNameIsValid, loginPwdIsValid);
     if (loginUserNameIsValid && loginPwdIsValid) {
       //console.log(loginUserNameIsValid + " " + loginPwdIsValid);
       setIsLoggingIn(true);
@@ -205,6 +205,9 @@ export default function SignInUp() {
           password: loginUserPwd,
         });
         if (res.status === 200) {
+          //console.log(res.data);
+          localStorage.setItem("token", res.data.token);
+          localStorage.setItem("expires", res.data.expiresIn);
           setLoginStatusData({ message: "Login Success", code: 200 });
         }
       } catch (ex: any) {

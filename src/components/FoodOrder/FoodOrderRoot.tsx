@@ -9,8 +9,8 @@ import useCounter from "./hooks/counter-hook";
 
 export default function FoodOrderRoot() {
   const foodCtx = useContext(FoodContext);
-  const counter1 = useCounter(0, 1000);
-  const counter2 = useCounter(20, 500);
+  //const counter1 = useCounter(0, 1000);
+  //const counter2 = useCounter(20, 500);
 
   useEffect(() => {
     async function get() {
