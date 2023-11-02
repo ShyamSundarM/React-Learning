@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import Input from "./Input";
 import Table from "./Table";
-import { TableInputContext } from "../context/table-input-context";
+import { TableInputContext } from "../../context/table-input-context";
 import styles from "./TableRoot.module.css";
 
 const TableRoot = () => {

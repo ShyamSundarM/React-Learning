@@ -1,7 +1,7 @@
 import { BaseSyntheticEvent, useContext } from "react";
 import styles from "./Input.module.css";
 import { type } from "os";
-import { TableInputContext } from "../context/table-input-context";
+import { TableInputContext } from "../../context/table-input-context";
 
 export type Form = {
   number: number;

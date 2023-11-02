@@ -4,7 +4,7 @@ import {
   PropsWithChildren,
   BaseSyntheticEvent,
 } from "react";
-import { Form } from "../components/Input";
+import { Form } from "../components/TableGenerator/Input";
 
 export const TableInputContext = createContext({
   formData: { number: 0, till: 0 },
