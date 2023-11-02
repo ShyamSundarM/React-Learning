@@ -195,8 +195,9 @@ export default function SignInUp() {
   async function loginFormSubmitHandler(event: BaseSyntheticEvent) {
     event.preventDefault();
     setLoginStatusData({ message: "", code: 0 });
+    //console.log(loginUserNameIsValid, loginPwdIsValid);
     if (loginUserNameIsValid && loginPwdIsValid) {
-      console.log(loginUserNameIsValid + " " + loginPwdIsValid);
+      //console.log(loginUserNameIsValid + " " + loginPwdIsValid);
       setIsLoggingIn(true);
       try {
         const res = await axios.post("https://rproj.somee.com/auth", {
@@ -234,6 +235,7 @@ export default function SignInUp() {
           <form onSubmit={loginFormSubmitHandler}>
             <input
               type="text"
+              disabled={isLoggingIn}
               placeholder="UserName"
               className={`form-control`}
               onChange={loginUserNameChangeHandler}
@@ -246,6 +248,7 @@ export default function SignInUp() {
 
             <input
               type="password"
+              disabled={isLoggingIn}
               placeholder="Password"
               className={`form-control`}
               onChange={loginUserPwdChangeHandler}
@@ -294,6 +297,7 @@ export default function SignInUp() {
           <form onSubmit={regFormSubmitHandler}>
             <input
               type="text"
+              disabled={isRegistering}
               className={`form-control`}
               placeholder="Full Name"
               onChange={regFullNameChangeHandler}
@@ -305,6 +309,7 @@ export default function SignInUp() {
             )}
             <input
               type="text"
+              disabled={isRegistering}
               className={`form-control`}
               placeholder="Phone Number"
               onChange={regPhoneNumChangeHandler}
@@ -321,6 +326,7 @@ export default function SignInUp() {
             )}
             <input
               type="text"
+              disabled={isRegistering}
               className={`form-control ${styles.regUname}`}
               placeholder="User Name"
               onChange={regUserNameChangeHandler}
@@ -351,6 +357,7 @@ export default function SignInUp() {
 
             <input
               type="password"
+              disabled={isRegistering}
               className={`form-control`}
               placeholder="Password"
               onChange={regPwdChangeHandler}
@@ -369,6 +376,7 @@ export default function SignInUp() {
 
             <input
               type="password"
+              disabled={isRegistering}
               className={`form-control`}
               placeholder="Re-Enter Password"
               onChange={regRePwdChangeHandler}

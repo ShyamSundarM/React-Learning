@@ -16,6 +16,8 @@ export default function useInput(validatorFnObj: ValidatorFnObj = null) {
             1000
           );
         else setUnameRes(null);
+      } else {
+        setUnameRes(true);
       }
     }
     asyncBlock();
