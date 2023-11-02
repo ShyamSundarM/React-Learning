@@ -10,6 +10,7 @@ import {
   SlideProps,
   Snackbar,
 } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 export type ValidatorFnObj = {
   isEmpty?: (value: string) => boolean;
   length?: (value: string) => boolean;
@@ -18,6 +19,7 @@ export type ValidatorFnObj = {
   checkUserName?: (value: string) => Promise<boolean>;
 };
 export default function SignInUp() {
+  const navigate = useNavigate();
   const [formState, setFormState] = useState("login");
   const [loginStatusData, setLoginStatusData] = useState<{
     message: string;
@@ -209,6 +211,7 @@ export default function SignInUp() {
           localStorage.setItem("token", res.data.token);
           localStorage.setItem("expires", res.data.expiresIn);
           setLoginStatusData({ message: "Login Success", code: 200 });
+          navigate("/HomePage", { replace: true });
         }
       } catch (ex: any) {
         handleError(ex);

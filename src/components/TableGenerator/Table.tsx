@@ -2,7 +2,7 @@ import { type } from "os";
 import { Form } from "./Input";
 import styles from "./Table.module.css";
 import { useContext } from "react";
-import { TableInputContext } from "../context/table-input-context";
+import { TableInputContext } from "../../context/table-input-context";
 
 type ResData = {
   number: number;
