@@ -1,6 +1,9 @@
 import {
+  Box,
+  Divider,
   List,
   ListItem,
+  ListItemButton,
   ListItemIcon,
   ListItemText,
   ListSubheader,
@@ -9,6 +12,7 @@ import {
 } from "@mui/material";
 import { Dispatch, SetStateAction } from "react";
 import Brightness4Icon from "@mui/icons-material/Brightness4";
+import { useNavigate } from "react-router-dom";
 
 type Props = {
   sideBarOpen: boolean;
@@ -16,6 +20,7 @@ type Props = {
 };
 
 export default function MainDrawer(props: Props) {
+  const navigate = useNavigate();
   return (
     <SwipeableDrawer
       anchor="left"
@@ -34,6 +39,29 @@ export default function MainDrawer(props: Props) {
             //checked={}
             // onChange={}
           />
+        </ListItem>
+      </List>
+      <Divider color="#4a4a4a" />
+      <List subheader={<ListSubheader>My Apps</ListSubheader>}>
+        <ListItem>
+          <ListItemButton
+            onClick={() => {
+              navigate("TableGenerator");
+              props.setSideBarOpen(false);
+            }}
+          >
+            <ListItemText primary="Table Generator" />
+          </ListItemButton>
+        </ListItem>
+        <ListItem>
+          <ListItemButton
+            onClick={() => {
+              navigate("FoodOrder");
+              props.setSideBarOpen(false);
+            }}
+          >
+            <ListItemText primary="Food Order" />
+          </ListItemButton>
         </ListItem>
       </List>
     </SwipeableDrawer>

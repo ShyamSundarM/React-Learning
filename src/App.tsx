@@ -22,7 +22,7 @@ const router = createBrowserRouter(
       <Route path="/Auth" element={<SignInUp />} />
       <Route path="/HomePage" element={<HomePage />}>
         <Route
-          path="Tables"
+          path="TableGenerator"
           element={
             <TableInputContextProvider>
               <TableRoot />
