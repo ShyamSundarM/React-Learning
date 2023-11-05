@@ -8,6 +8,7 @@ import { json } from "stream/consumers";
 import axios from "axios";
 import { LoadingButton } from "@mui/lab";
 import FoodItem from "./FoodItem";
+import { getCurrentURL } from "./Shared";
 
 type Props = {
   modalOpen: boolean;
@@ -123,10 +124,7 @@ const CartContent = (props: Props) => {
     }) {
       setIsOrderCreating(true);
       try {
-        var resp = await axios.post(
-          "https://rproj.somee.com/createOrder",
-          data
-        );
+        var resp = await axios.post(getCurrentURL() + "/createOrder", data);
         if (resp.status === 200) {
           resetFormState();
           resetCart();

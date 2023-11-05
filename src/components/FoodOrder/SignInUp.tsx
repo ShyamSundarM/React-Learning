@@ -1,4 +1,4 @@
-import React, { BaseSyntheticEvent, useState } from "react";
+import React, { BaseSyntheticEvent, useContext, useState } from "react";
 import styles from "./SignInUp.module.css";
 import useInput from "./hooks/useInput";
 import axios, { AxiosResponse } from "axios";
@@ -11,6 +11,8 @@ import {
   Snackbar,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { getCurrentURL } from "./Shared";
+import { AppContext } from "../../context/app-context";
 export type ValidatorFnObj = {
   isEmpty?: (value: string) => boolean;
   length?: (value: string) => boolean;
@@ -19,20 +21,13 @@ export type ValidatorFnObj = {
   checkUserName?: (value: string) => Promise<boolean>;
 };
 export default function SignInUp() {
+  const AppCtx = useContext(AppContext);
   const navigate = useNavigate();
   const [formState, setFormState] = useState("login");
-  const [loginStatusData, setLoginStatusData] = useState<{
-    message: string;
-    code: number;
-  }>({ message: "", code: 0 });
-  const [registerStatusData, setRegisterStatusData] = useState<{
-    message: string;
-    code: number;
-  }>({ message: "", code: 0 });
+
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [isRegistering, setIsRegistering] = useState(false);
-  const [snackBarVisible, setSnackBarVisible] = useState(false);
-  const [regSnackBarVisible, setRegSnackBarVisible] = useState(false);
+
   const [isUserNameChecking, setIsUserNameChecking] = useState(false);
   const {
     enteredValue: loginUserName,
@@ -52,6 +47,7 @@ export default function SignInUp() {
   } = useInput({ isEmpty: (value: string) => value.trim() !== "" });
   const {
     enteredValue: regFullName,
+    clearInput: regFullNameClearInput,
     valueChangeHandler: regFullNameChangeHandler,
     inputBlurHandler: regFullNameBlurHandler,
     errors: regFullNameErrors,
@@ -59,6 +55,7 @@ export default function SignInUp() {
   } = useInput({ isEmpty: (value: string) => value.trim() !== "" });
   const {
     enteredValue: regPhoneNum,
+    clearInput: regPhoneNumClearInput,
     valueChangeHandler: regPhoneNumChangeHandler,
     inputBlurHandler: regPhoneNumBlurHandler,
     errors: regPhoneNumErrors,
@@ -70,6 +67,7 @@ export default function SignInUp() {
   });
   const {
     enteredValue: regUserName,
+    clearInput: regUserNameClearInput,
     valueChangeHandler: regUserNameChangeHandler,
     inputBlurHandler: regUserNameBlurHandler,
     errors: regUserNameErrors,
@@ -79,7 +77,7 @@ export default function SignInUp() {
     checkUserName: async (value: string) => {
       setIsUserNameChecking(true);
       const res = await axios.get<boolean>(
-        "https://rproj.somee.com/isUserNameAvailable/" + value
+        getCurrentURL() + "/isUserNameAvailable/" + value
       );
       setIsUserNameChecking(false);
       console.log(res.data);
@@ -89,6 +87,7 @@ export default function SignInUp() {
   });
   const {
     enteredValue: regPwd,
+    clearInput: regPwdClearInput,
     valueChangeHandler: regPwdChangeHandler,
     inputBlurHandler: regPwdBlurHandler,
     errors: regPwdErrors,
@@ -105,6 +104,7 @@ export default function SignInUp() {
   });
   const {
     enteredValue: regRePwd,
+    clearInput: regRePwdClearInput,
     valueChangeHandler: regRePwdChangeHandler,
     inputBlurHandler: regRePwdBlurHandler,
     errors: regRePwdErrors,
@@ -114,46 +114,43 @@ export default function SignInUp() {
     matchErr: (value: string) => value === regPwd,
   });
 
+  function resetRegistrationForm() {
+    regFullNameClearInput();
+    regPhoneNumClearInput();
+    regUserNameClearInput();
+    regPwdClearInput();
+    regRePwdClearInput();
+  }
+
   function handleError(ex: any) {
+    //console.log(ex);
     if (formState === "login") {
-      if (ex.response.status === 401) {
-        setLoginStatusData({
-          message: "Incorrect UserName/Password",
-          code: ex.response.status,
-        });
-      } else if (ex.response.status === 500) {
-        setLoginStatusData({
-          message: "Internal Server Error",
-          code: ex.response.status,
-        });
-      } else {
-        setLoginStatusData({
-          message: "Unknown Error occured",
-          code: ex.response.status,
-        });
-      }
+      if (ex.response) {
+        if (ex.response.status === 401) {
+          AppCtx.setLoginStatusData({
+            message: "Incorrect UserName/Password",
+            code: ex.response.status,
+          });
+        } else {
+          AppCtx.setLoginStatusData({
+            message: "Internal Server Error",
+            code: ex.response.status,
+          });
+        }
+      } else AppCtx.setLoginStatusData({ message: "Network Error", code: 500 });
     } else {
-      if (ex.response.status === 401) {
-        setRegisterStatusData({
-          message: "Incorrect UserName/Password",
-          code: ex.response.status,
-        });
-      } else if (ex.response.status === 500) {
-        setRegisterStatusData({
+      if (ex.response) {
+        AppCtx.setRegisterStatusData({
           message: "Internal Server Error",
           code: ex.response.status,
         });
-      } else {
-        setRegisterStatusData({
-          message: "Unknown Error occured",
-          code: ex.response.status,
-        });
       }
+      AppCtx.setRegisterStatusData({ message: "Network Error", code: 500 });
     }
   }
   async function regFormSubmitHandler(event: BaseSyntheticEvent) {
     event.preventDefault();
-    setRegisterStatusData({ message: "", code: 0 });
+    AppCtx.setRegisterStatusData({ message: "", code: 0 });
     if (
       regFullNameIsValid &&
       regPhoneNumIsValid &&
@@ -163,7 +160,7 @@ export default function SignInUp() {
     ) {
       setIsRegistering(true);
       try {
-        const res = await axios.post("https://rproj.somee.com/register", {
+        const res = await axios.post(getCurrentURL() + "/register", {
           fullName: regFullName,
           phoneNumber: regPhoneNum,
           userName: regUserName,
@@ -172,18 +169,21 @@ export default function SignInUp() {
         if (res.status === 200) {
           //console.log(res.data);
           if (res.data === "1") {
-            setRegisterStatusData({
+            AppCtx.setRegisterStatusData({
               message: "Registration Success",
               code: 200,
             });
+            resetRegistrationForm();
+            setFormState("login");
           } else {
-            setRegisterStatusData({ message: res.data, code: 500 });
+            AppCtx.setRegisterStatusData({ message: res.data, code: 500 });
           }
         }
       } catch (ex: any) {
         handleError(ex);
       }
-      setRegSnackBarVisible(true);
+      AppCtx.setLoginSnackBarVisible(true);
+      //setRegSnackBarVisible(true);
       setIsRegistering(false);
     } else {
       regFullNameBlurHandler();
@@ -196,27 +196,28 @@ export default function SignInUp() {
 
   async function loginFormSubmitHandler(event: BaseSyntheticEvent) {
     event.preventDefault();
-    setLoginStatusData({ message: "", code: 0 });
-    console.log(loginUserNameIsValid, loginPwdIsValid);
+    AppCtx.setLoginStatusData({ message: "", code: 0 });
+    //console.log(loginUserNameIsValid, loginPwdIsValid);
     if (loginUserNameIsValid && loginPwdIsValid) {
       //console.log(loginUserNameIsValid + " " + loginPwdIsValid);
       setIsLoggingIn(true);
       try {
-        const res = await axios.post("https://rproj.somee.com/auth", {
+        const res = await axios.post(getCurrentURL() + "/auth", {
           userName: loginUserName,
           password: loginUserPwd,
         });
+        //console.log(res);
         if (res.status === 200) {
-          //console.log(res.data);
           localStorage.setItem("token", res.data.token);
           localStorage.setItem("expires", res.data.expiresIn);
-          setLoginStatusData({ message: "Login Success", code: 200 });
+          AppCtx.setLoginStatusData({ message: "Login Success", code: 200 });
           navigate("/HomePage", { replace: true });
         }
       } catch (ex: any) {
         handleError(ex);
       }
-      setSnackBarVisible(true);
+      AppCtx.setLoginSnackBarVisible(true);
+      //setSnackBarVisible(true);
       setIsLoggingIn(false);
     } else {
       loginUserNameBlurHandler();
@@ -231,9 +232,7 @@ export default function SignInUp() {
   function signInClickHandler() {
     setFormState("login");
   }
-  function SlideTransition(props: SlideProps) {
-    return <Slide {...props} direction="down" />;
-  }
+
   if (formState === "login")
     return (
       <>
@@ -283,17 +282,6 @@ export default function SignInUp() {
             </p>
           </form>
         </div>
-        <Snackbar
-          open={snackBarVisible}
-          onClose={() => setSnackBarVisible(false)}
-          TransitionComponent={SlideTransition}
-          autoHideDuration={3000}
-          anchorOrigin={{ horizontal: "right", vertical: "top" }}
-        >
-          <Alert severity={loginStatusData.code === 200 ? "success" : "error"}>
-            {loginStatusData.message}
-          </Alert>
-        </Snackbar>
       </>
     );
   if (formState === "register")
@@ -414,19 +402,6 @@ export default function SignInUp() {
             </p>
           </form>
         </div>
-        <Snackbar
-          open={regSnackBarVisible}
-          onClose={() => setRegSnackBarVisible(false)}
-          TransitionComponent={SlideTransition}
-          autoHideDuration={3000}
-          anchorOrigin={{ horizontal: "right", vertical: "top" }}
-        >
-          <Alert
-            severity={registerStatusData.code === 200 ? "success" : "error"}
-          >
-            {registerStatusData.message}
-          </Alert>
-        </Snackbar>
       </>
     );
 }

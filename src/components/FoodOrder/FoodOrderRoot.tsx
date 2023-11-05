@@ -6,6 +6,7 @@ import { FoodContext, FoodItem } from "../../context/food-context";
 import { Skeleton } from "@mui/material";
 import RootSkeleton from "./RootSkeleton";
 import useCounter from "./hooks/counter-hook";
+import { getCurrentURL } from "./Shared";
 
 export default function FoodOrderRoot() {
   const foodCtx = useContext(FoodContext);
@@ -15,7 +16,7 @@ export default function FoodOrderRoot() {
   useEffect(() => {
     async function get() {
       var foodData = (
-        await axios.get<Array<FoodItem>>("https://rproj.somee.com/foods")
+        await axios.get<Array<FoodItem>>(getCurrentURL() + "/foods")
       ).data;
       foodData = foodData.map((item) => {
         return { ...item, chosenCount: 0 };
