@@ -47,11 +47,15 @@ export default function useInput(validatorFnObj: ValidatorFnObj = null) {
   function inputBlurHandler() {
     setIsTouched(true);
   }
+  function clearInput() {
+    setEnteredValue("");
+  }
 
   return {
     enteredValue,
     valueChangeHandler,
     inputBlurHandler,
+    clearInput,
     errors: {
       isEmpty: isTouched && !isEmptyRes,
       length: isTouched && !lengthRes,
