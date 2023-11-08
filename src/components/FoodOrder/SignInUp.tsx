@@ -1,16 +1,10 @@
-import React, { BaseSyntheticEvent, useContext, useState } from "react";
+import { BaseSyntheticEvent, useContext, useState } from "react";
 import styles from "./SignInUp.module.css";
 import useInput from "./hooks/useInput";
-import axios, { AxiosResponse } from "axios";
+import axios from "axios";
 import { LoadingButton } from "@mui/lab";
-import {
-  Alert,
-  CircularProgress,
-  Slide,
-  SlideProps,
-  Snackbar,
-} from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { CircularProgress } from "@mui/material";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { getCurrentURL } from "./Shared";
 import { AppContext } from "../../context/app-context";
 export type ValidatorFnObj = {
@@ -20,10 +14,18 @@ export type ValidatorFnObj = {
   regexRequired?: (value: string) => boolean;
   checkUserName?: (value: string) => Promise<boolean>;
 };
+
 export default function SignInUp() {
+  const [queryParams] = useSearchParams();
   const AppCtx = useContext(AppContext);
   const navigate = useNavigate();
-  const [formState, setFormState] = useState("login");
+  var formState = "login";
+  if (queryParams.get("mode") === "login") {
+    formState = "login";
+  }
+  if (queryParams.get("mode") === "register") {
+    formState = "register";
+  }
 
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [isRegistering, setIsRegistering] = useState(false);
@@ -123,7 +125,6 @@ export default function SignInUp() {
   }
 
   function handleError(ex: any) {
-    //console.log(ex);
     if (formState === "login") {
       if (ex.response) {
         if (ex.response.status === 401) {
@@ -167,14 +168,13 @@ export default function SignInUp() {
           password: regPwd,
         });
         if (res.status === 200) {
-          //console.log(res.data);
           if (res.data === "1") {
             AppCtx.setRegisterStatusData({
               message: "Registration Success",
               code: 200,
             });
             resetRegistrationForm();
-            setFormState("login");
+            navigate("?mode=login");
           } else {
             AppCtx.setRegisterStatusData({ message: res.data, code: 500 });
           }
@@ -182,8 +182,7 @@ export default function SignInUp() {
       } catch (ex: any) {
         handleError(ex);
       }
-      AppCtx.setLoginSnackBarVisible(true);
-      //setRegSnackBarVisible(true);
+      AppCtx.setRegisterSnackBarVisible(true);
       setIsRegistering(false);
     } else {
       regFullNameBlurHandler();
@@ -224,15 +223,6 @@ export default function SignInUp() {
       loginUserPwdBlurHandler();
     }
   }
-
-  function registerClickHandler() {
-    setFormState("register");
-  }
-
-  function signInClickHandler() {
-    setFormState("login");
-  }
-
   if (formState === "login")
     return (
       <>
@@ -273,12 +263,9 @@ export default function SignInUp() {
             </LoadingButton>
             <p>
               Dont have an account ? Register{" "}
-              <span
-                onClick={registerClickHandler}
-                className={styles.registerLink}
-              >
+              <Link to={"?mode=register"} className={styles.registerLink}>
                 here
-              </span>
+              </Link>
             </p>
           </form>
         </div>
@@ -393,12 +380,9 @@ export default function SignInUp() {
             </LoadingButton>
             <p>
               Already a member ?{" "}
-              <span
-                onClick={signInClickHandler}
-                className={styles.registerLink}
-              >
+              <Link to={"?mode=login"} className={styles.registerLink}>
                 Sign In
-              </span>
+              </Link>
             </p>
           </form>
         </div>
