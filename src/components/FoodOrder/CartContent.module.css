@@ -3,6 +3,8 @@
   padding: 0px 8px 0px 8px;
   background-color: rgb(247, 233, 207);
   border-radius: 10px;
+  max-height: 95%;
+  overflow: scroll;
 }
 .modalTitle {
   font-size: 24px;
