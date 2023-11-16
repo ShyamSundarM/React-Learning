@@ -18,7 +18,9 @@ export default function Modal(props: PropsWithChildren<Props>) {
           onClick={() => props.setModalOpen(false)}
           className={styles.background}
         >
-          {props.children}
+          <div className={styles.content} onClick={(e) => e.stopPropagation()}>
+            {props.children}
+          </div>
         </motion.div>
       )}
     </AnimatePresence>
