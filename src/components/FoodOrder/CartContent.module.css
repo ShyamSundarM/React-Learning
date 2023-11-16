@@ -1,13 +1,4 @@
-.ModalContainer {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  color: rgb(255, 255, 255);
-  outline: 0;
-  max-width: 90%;
-  max-height: 90%;
-  overflow: auto;
+.rootContainer {
   height: auto;
   padding: 0px 8px 0px 8px;
   background-color: rgb(247, 233, 207);
@@ -36,12 +27,7 @@
   border-radius: 10px;
   background-color: rgb(107, 136, 255);
 }
-.modalStartAnim {
-  animation: slideInFromTop 0.2s ease-in;
-}
-.modalCloseAnim {
-  animation: slideAway 0.2s ease-out;
-}
+
 .modalHeader {
   position: sticky;
   top: 0;
@@ -70,25 +56,4 @@
 }
 .checkOutBtn {
   align-self: center;
-}
-@keyframes slideInFromTop {
-  0% {
-    transform: translateY(-20%);
-    opacity: 0;
-  }
-  100% {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-@keyframes slideAway {
-  0% {
-    transform: translateY(0);
-    opacity: 1;
-  }
-  100% {
-    transform: translateY(-20%);
-    opacity: 0;
-  }
 }

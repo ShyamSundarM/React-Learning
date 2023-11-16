@@ -1,14 +1,14 @@
 import styles from "./CartContent.module.css";
-import { Divider, Modal } from "@mui/material";
+import { Divider } from "@mui/material";
 import CartItem from "./CartItem";
 import { useContext, useEffect, useState } from "react";
 import { FoodContext } from "../../context/food-context";
 import AddressForm from "./AddressForm";
-import { json } from "stream/consumers";
 import axios from "axios";
 import { LoadingButton } from "@mui/lab";
-import FoodItem from "./FoodItem";
 import { getCurrentURL } from "./Shared";
+import { AnimatePresence, motion } from "framer-motion";
+import Modal from "./Modal";
 
 type Props = {
   modalOpen: boolean;
@@ -17,13 +17,12 @@ type Props = {
 
 const CartContent = (props: Props) => {
   const foodCtx = useContext(FoodContext);
-  const { modalOpen } = props;
+  const { modalOpen, setModalOpen } = props;
   const { foodItems } = foodCtx;
   const cartData = foodItems.filter((f) => f.chosenCount > 0);
   const netItemAmount = foodCtx.foodItems.reduce((total, f) => {
     return total + f.chosenCount * f.price;
   }, 0);
-  const [modalAnimClass, setModalAnimClass] = useState(styles.modalStartAnim);
   const [shouldValidateForm, setShouldValidateForm] = useState(false);
   const [isOrderCreating, setIsOrderCreating] = useState(false);
   const [formValid, setFormValid] = useState<{
@@ -71,20 +70,9 @@ const CartContent = (props: Props) => {
   }
 
   function onModalClose() {
-    setModalAnimClass(styles.modalCloseAnim);
-    setTimeout(() => {
-      setModalAnimClass("");
-      props.setModalOpen((prev) => !prev);
-    }, 200);
+    props.setModalOpen(false);
   }
-  useEffect(() => {
-    if (modalOpen) {
-      setModalAnimClass(styles.modalStartAnim);
-      const timer = setTimeout(() => {
-        setModalAnimClass("");
-      }, 200);
-    }
-  }, [modalOpen]);
+
   useEffect(() => {
     if (shouldValidateForm) {
       setShouldValidateForm(false);
@@ -164,13 +152,8 @@ const CartContent = (props: Props) => {
     resetFormState();
   }
   return (
-    <Modal
-      className={modalAnimClass}
-      open={props.modalOpen}
-      onClose={onModalClose}
-      BackdropProps={{ style: { backgroundColor: "rgba(0,0,0,0.8)" } }}
-    >
-      <div className={styles.ModalContainer}>
+    <Modal modalOpen={modalOpen} setModalOpen={setModalOpen}>
+      <div className={styles.rootContainer}>
         <div className={styles.modalHeader}>
           <div className={styles.modalTitle}>{modalTitle}</div>
           <Divider color="rgb(91, 86, 86);" className="" />
