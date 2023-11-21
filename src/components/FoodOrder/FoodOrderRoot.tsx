@@ -16,7 +16,9 @@ export default function FoodOrderRoot() {
   useEffect(() => {
     async function get() {
       var foodData = (
-        await axios.get<Array<FoodItem>>(getCurrentURL() + "/foods")
+        await axios.get<Array<FoodItem>>(getCurrentURL() + "/foods", {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        })
       ).data;
       foodData = foodData.map((item) => {
         return { ...item, chosenCount: 0 };

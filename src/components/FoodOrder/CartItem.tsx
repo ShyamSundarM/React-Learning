@@ -13,19 +13,11 @@ type Props = {
   price: number;
 };
 export default function CartItem(props: Props) {
-  const { dataLoaded } = useContext(FoodContext);
   return (
     <div className={styles.container}>
       <div className={styles.innerContainer}>
-        {dataLoaded ? (
-          <img src={props.image} className={styles.image} />
-        ) : (
-          <Skeleton
-            variant="rounded"
-            className={styles.image}
-            animation="wave"
-          />
-        )}
+        <img src={props.image} className={styles.image} />
+
         <div className={styles.details}>
           <div>
             <div className={styles.name}>{props.name}</div>

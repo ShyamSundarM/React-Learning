@@ -1,18 +1,13 @@
-import React, { BaseSyntheticEvent, useContext, useState } from "react";
+import { BaseSyntheticEvent, useContext, useState } from "react";
 import styles from "./SignInUp.module.css";
 import useInput from "./hooks/useInput";
-import axios, { AxiosResponse } from "axios";
+import axios from "axios";
 import { LoadingButton } from "@mui/lab";
-import {
-  Alert,
-  CircularProgress,
-  Slide,
-  SlideProps,
-  Snackbar,
-} from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { CircularProgress } from "@mui/material";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { getCurrentURL } from "./Shared";
 import { AppContext } from "../../context/app-context";
+import { AnimatePresence, motion } from "framer-motion";
 export type ValidatorFnObj = {
   isEmpty?: (value: string) => boolean;
   length?: (value: string) => boolean;
@@ -20,10 +15,18 @@ export type ValidatorFnObj = {
   regexRequired?: (value: string) => boolean;
   checkUserName?: (value: string) => Promise<boolean>;
 };
+
 export default function SignInUp() {
+  const [queryParams] = useSearchParams();
   const AppCtx = useContext(AppContext);
   const navigate = useNavigate();
-  const [formState, setFormState] = useState("login");
+  var formState = "login";
+  if (queryParams.get("mode") === "login") {
+    formState = "login";
+  }
+  if (queryParams.get("mode") === "register") {
+    formState = "register";
+  }
 
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [isRegistering, setIsRegistering] = useState(false);
@@ -123,7 +126,6 @@ export default function SignInUp() {
   }
 
   function handleError(ex: any) {
-    //console.log(ex);
     if (formState === "login") {
       if (ex.response) {
         if (ex.response.status === 401) {
@@ -167,14 +169,13 @@ export default function SignInUp() {
           password: regPwd,
         });
         if (res.status === 200) {
-          //console.log(res.data);
           if (res.data === "1") {
             AppCtx.setRegisterStatusData({
               message: "Registration Success",
               code: 200,
             });
             resetRegistrationForm();
-            setFormState("login");
+            navigate("?mode=login");
           } else {
             AppCtx.setRegisterStatusData({ message: res.data, code: 500 });
           }
@@ -182,8 +183,7 @@ export default function SignInUp() {
       } catch (ex: any) {
         handleError(ex);
       }
-      AppCtx.setLoginSnackBarVisible(true);
-      //setRegSnackBarVisible(true);
+      AppCtx.setRegisterSnackBarVisible(true);
       setIsRegistering(false);
     } else {
       regFullNameBlurHandler();
@@ -224,184 +224,182 @@ export default function SignInUp() {
       loginUserPwdBlurHandler();
     }
   }
-
-  function registerClickHandler() {
-    setFormState("register");
-  }
-
-  function signInClickHandler() {
-    setFormState("login");
-  }
-
-  if (formState === "login")
-    return (
-      <>
-        <div className={styles.formRoot}>
-          <form onSubmit={loginFormSubmitHandler}>
-            <input
-              type="text"
-              disabled={isLoggingIn}
-              placeholder="UserName"
-              className={`form-control`}
-              onChange={loginUserNameChangeHandler}
-              onBlur={loginUserNameBlurHandler}
-              value={loginUserName}
-            />
-            {LoginUserNameErrors.isEmpty && (
-              <p className={styles.errText}>UserName cannot be empty</p>
-            )}
-
-            <input
-              type="password"
-              disabled={isLoggingIn}
-              placeholder="Password"
-              className={`form-control`}
-              onChange={loginUserPwdChangeHandler}
-              onBlur={loginUserPwdBlurHandler}
-              value={loginUserPwd}
-            />
-            {LoginUserPwdErrors.isEmpty && (
-              <p className={styles.errText}>Password cannot be empty</p>
-            )}
-            <LoadingButton
-              type="submit"
-              className="btn btn-primary"
-              loading={isLoggingIn}
-              variant="contained"
-            >
-              Login
-            </LoadingButton>
-            <p>
-              Dont have an account ? Register{" "}
-              <span
-                onClick={registerClickHandler}
-                className={styles.registerLink}
-              >
-                here
-              </span>
-            </p>
-          </form>
-        </div>
-      </>
-    );
-  if (formState === "register")
-    return (
-      <>
-        <div className={styles.formRoot}>
-          <form onSubmit={regFormSubmitHandler}>
-            <input
-              type="text"
-              disabled={isRegistering}
-              className={`form-control`}
-              placeholder="Full Name"
-              onChange={regFullNameChangeHandler}
-              onBlur={regFullNameBlurHandler}
-              value={regFullName}
-            />
-            {regFullNameErrors.isEmpty && (
-              <p className={styles.errText}>Full Name cannot be empty</p>
-            )}
-            <input
-              type="text"
-              disabled={isRegistering}
-              className={`form-control`}
-              placeholder="Phone Number"
-              onChange={regPhoneNumChangeHandler}
-              onBlur={regPhoneNumBlurHandler}
-              value={regPhoneNum}
-            />
-            {regPhoneNumErrors.isEmpty && (
-              <p className={styles.errText}>Phone Number cannot be empty</p>
-            )}
-            {regPhoneNumErrors.regex && (
-              <p className={styles.errText}>
-                Phone Number not in correct format
-              </p>
-            )}
-            <input
-              type="text"
-              disabled={isRegistering}
-              className={`form-control ${styles.regUname}`}
-              placeholder="User Name"
-              onChange={regUserNameChangeHandler}
-              onBlur={regUserNameBlurHandler}
-              value={regUserName}
-            />
-            <div className="unameProgressDiv">
-              {isUserNameChecking && (
-                <CircularProgress size={16} className={styles.unameProgress} />
+  return (
+    <AnimatePresence>
+      <div className={styles.center}>
+        {formState === "login" && (
+          <motion.div
+            className={styles.formRoot}
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            //exit={{ opacity: 0, x: 50 }}
+          >
+            <form onSubmit={loginFormSubmitHandler}>
+              <input
+                type="text"
+                disabled={isLoggingIn}
+                placeholder="UserName"
+                className={`form-control`}
+                onChange={loginUserNameChangeHandler}
+                onBlur={loginUserNameBlurHandler}
+                value={loginUserName}
+              />
+              {LoginUserNameErrors.isEmpty && (
+                <p className={styles.errText}>UserName cannot be empty</p>
               )}
-              {regUserNameErrors.userNameExists !== null &&
-                !regUserNameErrors.userNameExists && (
-                  <p className={styles.errText}>Username already taken</p>
+
+              <input
+                type="password"
+                disabled={isLoggingIn}
+                placeholder="Password"
+                className={`form-control`}
+                onChange={loginUserPwdChangeHandler}
+                onBlur={loginUserPwdBlurHandler}
+                value={loginUserPwd}
+              />
+              {LoginUserPwdErrors.isEmpty && (
+                <p className={styles.errText}>Password cannot be empty</p>
+              )}
+              <LoadingButton
+                type="submit"
+                className="btn btn-primary"
+                loading={isLoggingIn}
+                variant="contained"
+              >
+                Login
+              </LoadingButton>
+              <p>
+                Dont have an account ? Register{" "}
+                <Link to={"?mode=register"} className={styles.registerLink}>
+                  here
+                </Link>
+              </p>
+            </form>
+          </motion.div>
+        )}
+        {formState === "register" && (
+          <motion.div
+            className={styles.formRoot}
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            //exit={{ opacity: 0, x: 50 }}
+          >
+            <form onSubmit={regFormSubmitHandler}>
+              <input
+                type="text"
+                disabled={isRegistering}
+                className={`form-control`}
+                placeholder="Full Name"
+                onChange={regFullNameChangeHandler}
+                onBlur={regFullNameBlurHandler}
+                value={regFullName}
+              />
+              {regFullNameErrors.isEmpty && (
+                <p className={styles.errText}>Full Name cannot be empty</p>
+              )}
+              <input
+                type="text"
+                disabled={isRegistering}
+                className={`form-control`}
+                placeholder="Phone Number"
+                onChange={regPhoneNumChangeHandler}
+                onBlur={regPhoneNumBlurHandler}
+                value={regPhoneNum}
+              />
+              {regPhoneNumErrors.isEmpty && (
+                <p className={styles.errText}>Phone Number cannot be empty</p>
+              )}
+              {regPhoneNumErrors.regex && (
+                <p className={styles.errText}>
+                  Phone Number not in correct format
+                </p>
+              )}
+              <input
+                type="text"
+                disabled={isRegistering}
+                className={`form-control ${styles.regUname}`}
+                placeholder="User Name"
+                onChange={regUserNameChangeHandler}
+                onBlur={regUserNameBlurHandler}
+                value={regUserName}
+              />
+              <div className="unameProgressDiv">
+                {isUserNameChecking && (
+                  <CircularProgress
+                    size={16}
+                    className={styles.unameProgress}
+                  />
                 )}
-              {regUserNameErrors.userNameExists && (
-                <p className={styles.successText}>UserName available</p>
+                {regUserNameErrors.userNameExists !== null &&
+                  !regUserNameErrors.userNameExists && (
+                    <p className={styles.errText}>Username already taken</p>
+                  )}
+                {regUserNameErrors.userNameExists && (
+                  <p className={styles.successText}>UserName available</p>
+                )}
+              </div>
+
+              {regUserNameErrors.isEmpty && (
+                <p className={styles.errText}>UserName cannot be empty</p>
               )}
-            </div>
+              {regUserNameErrors.length && (
+                <p className={styles.errText}>
+                  UserName cannot be less than 4 characters
+                </p>
+              )}
 
-            {regUserNameErrors.isEmpty && (
-              <p className={styles.errText}>UserName cannot be empty</p>
-            )}
-            {regUserNameErrors.length && (
-              <p className={styles.errText}>
-                UserName cannot be less than 4 characters
-              </p>
-            )}
+              <input
+                type="password"
+                disabled={isRegistering}
+                className={`form-control`}
+                placeholder="Password"
+                onChange={regPwdChangeHandler}
+                onBlur={regPwdBlurHandler}
+                value={regPwd}
+              />
+              {regPwdErrors.isEmpty && (
+                <p className={styles.errText}>Password cannot be empty</p>
+              )}
+              {(regPwdErrors.regex || regPwdErrors.length) && (
+                <p className={styles.errText}>
+                  Password must contain 1Small, 1Capital and any of .@&$# with
+                  length range of 6,9
+                </p>
+              )}
 
-            <input
-              type="password"
-              disabled={isRegistering}
-              className={`form-control`}
-              placeholder="Password"
-              onChange={regPwdChangeHandler}
-              onBlur={regPwdBlurHandler}
-              value={regPwd}
-            />
-            {regPwdErrors.isEmpty && (
-              <p className={styles.errText}>Password cannot be empty</p>
-            )}
-            {(regPwdErrors.regex || regPwdErrors.length) && (
-              <p className={styles.errText}>
-                Password must contain 1Small, 1Capital and any of .@&$# with
-                length range of 6,9
-              </p>
-            )}
-
-            <input
-              type="password"
-              disabled={isRegistering}
-              className={`form-control`}
-              placeholder="Re-Enter Password"
-              onChange={regRePwdChangeHandler}
-              onBlur={regRePwdBlurHandler}
-              value={regRePwd}
-            />
-            {regRePwdErrors.isEmpty && (
-              <p className={styles.errText}>This field cannot be empty</p>
-            )}
-            {regRePwdErrors.matchErr && (
-              <p className={styles.errText}>Passwords doesn't match</p>
-            )}
-            <LoadingButton
-              type="submit"
-              className="btn btn-success"
-              variant="contained"
-              loading={isRegistering}
-            >
-              Register
-            </LoadingButton>
-            <p>
-              Already a member ?{" "}
-              <span
-                onClick={signInClickHandler}
-                className={styles.registerLink}
+              <input
+                type="password"
+                disabled={isRegistering}
+                className={`form-control`}
+                placeholder="Re-Enter Password"
+                onChange={regRePwdChangeHandler}
+                onBlur={regRePwdBlurHandler}
+                value={regRePwd}
+              />
+              {regRePwdErrors.isEmpty && (
+                <p className={styles.errText}>This field cannot be empty</p>
+              )}
+              {regRePwdErrors.matchErr && (
+                <p className={styles.errText}>Passwords doesn't match</p>
+              )}
+              <LoadingButton
+                type="submit"
+                className="btn btn-success"
+                variant="contained"
+                loading={isRegistering}
               >
-                Sign In
-              </span>
-            </p>
-          </form>
-        </div>
-      </>
-    );
+                Register
+              </LoadingButton>
+              <p>
+                Already a member ?{" "}
+                <Link to={"?mode=login"} className={styles.registerLink}>
+                  Sign In
+                </Link>
+              </p>
+            </form>
+          </motion.div>
+        )}
+      </div>
+    </AnimatePresence>
+  );
 }
