@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from "framer-motion";
 
 type Props = {
   modalOpen: boolean;
-  setModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setModalOpen: (open: boolean) => void;
 };
 
 export default function Modal(props: PropsWithChildren<Props>) {

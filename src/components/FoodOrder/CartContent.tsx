@@ -10,14 +10,8 @@ import { getCurrentURL } from "./Shared";
 import { AnimatePresence, motion } from "framer-motion";
 import Modal from "./Modal";
 
-type Props = {
-  modalOpen: boolean;
-  setModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
-};
-
-const CartContent = (props: Props) => {
+const CartContent = () => {
   const foodCtx = useContext(FoodContext);
-  const { modalOpen, setModalOpen } = props;
   const { foodItems } = foodCtx;
   const cartData = foodItems.filter((f) => f.chosenCount > 0);
   const netItemAmount = foodCtx.foodItems.reduce((total, f) => {
@@ -69,10 +63,6 @@ const CartContent = (props: Props) => {
     modalTitle = "Enter Details";
   }
 
-  function onModalClose() {
-    props.setModalOpen(false);
-  }
-
   useEffect(() => {
     if (shouldValidateForm) {
       setShouldValidateForm(false);
@@ -117,7 +107,7 @@ const CartContent = (props: Props) => {
           resetFormState();
           resetCart();
           setFormState("cart");
-          props.setModalOpen(false);
+          foodCtx.setModalOpen(false);
         }
         setIsOrderCreating(false);
       } catch (e: any) {
@@ -152,7 +142,7 @@ const CartContent = (props: Props) => {
     resetFormState();
   }
   return (
-    <Modal modalOpen={modalOpen} setModalOpen={setModalOpen}>
+    <Modal modalOpen={foodCtx.modalOpen} setModalOpen={foodCtx.setModalOpen}>
       <div className={styles.rootContainer}>
         <div className={styles.modalHeader}>
           <div className={styles.modalTitle}>{modalTitle}</div>

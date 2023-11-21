@@ -14,6 +14,8 @@ type ContextType = {
   incDecFoodItem: (id: number, isAdd: boolean) => void;
   setAllFoodItems: (items: Array<FoodItem>) => void;
   setDataLoadedFlag: (flag: boolean) => void;
+  modalOpen: boolean;
+  setModalOpen: (flag: boolean) => void;
 };
 
 export const FoodContext = createContext<ContextType>({
@@ -22,11 +24,17 @@ export const FoodContext = createContext<ContextType>({
   incDecFoodItem: (id: number, isAdd: boolean) => {},
   setAllFoodItems: (items: Array<FoodItem>) => {},
   setDataLoadedFlag: (flag: boolean) => {},
+  modalOpen: false,
+  setModalOpen: (flag: boolean) => {},
 });
 
 export default function FoodContextProvider(props: PropsWithChildren) {
   const [foodItems, setFoodItems] = useState<Array<FoodItem>>([]);
   const [dataLoaded, setDataLoaded] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  function setModalOpenFlag(flag: boolean) {
+    setModalOpen((prev) => flag);
+  }
   function setDataLoadedFlag(flag: boolean) {
     setDataLoaded((prev) => flag);
   }
@@ -50,6 +58,8 @@ export default function FoodContextProvider(props: PropsWithChildren) {
         foodItems: foodItems,
         incDecFoodItem: incDecFoodItem,
         setAllFoodItems: setAllFoodItems,
+        modalOpen,
+        setModalOpen: setModalOpenFlag,
       }}
     >
       {props.children}
