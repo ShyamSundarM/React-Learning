@@ -10,7 +10,7 @@ export default function Header() {
     return total + f.chosenCount;
   }, 0);
   return (
-    <nav className="navbar navbar-light bg-dark">
+    <nav className={`navbar navbar-light bg-dark ${styles.container}`}>
       <a className={`navbar-brand ${styles.title}`} href="#">
         React Food Order
       </a>

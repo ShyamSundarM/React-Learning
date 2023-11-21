@@ -6,3 +6,7 @@
 .cartPos {
   margin-right: 10px;
 }
+
+.container {
+  z-index: 1;
+}

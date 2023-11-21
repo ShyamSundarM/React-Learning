@@ -2,6 +2,12 @@
   width: 150px;
   height: 150px;
   border-radius: 10px;
+  transform: scale(1);
+  transition: transform 0.2s ease-in-out;
+}
+
+.image:hover {
+  transform: scale(1.1);
 }
 
 .container {
@@ -12,6 +18,12 @@
   padding: 8px;
   border-radius: 10px;
   background-color: aliceblue;
+}
+
+.container:hover {
+  border: solid 1px #1890ff;
+  background-color: #e6f7ff;
+  cursor: pointer;
 }
 
 .innerContainer {
