@@ -102,7 +102,7 @@ const CartContent = () => {
     }) {
       setIsOrderCreating(true);
       try {
-        var resp = await axios.post(getCurrentURL() + "/createOrder", data);
+        var resp = await axios.post(getCurrentURL() + "/food/order", data);
         if (resp.status === 200) {
           resetFormState();
           resetCart();
