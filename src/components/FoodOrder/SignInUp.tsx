@@ -80,7 +80,7 @@ export default function SignInUp() {
     checkUserName: async (value: string) => {
       setIsUserNameChecking(true);
       const res = await axios.get<boolean>(
-        getCurrentURL() + "/isUserNameAvailable/" + value
+        getCurrentURL() + "/auth/isUserNameAvailable/" + value
       );
       setIsUserNameChecking(false);
       console.log(res.data);
@@ -162,7 +162,7 @@ export default function SignInUp() {
     ) {
       setIsRegistering(true);
       try {
-        const res = await axios.post(getCurrentURL() + "/register", {
+        const res = await axios.post(getCurrentURL() + "/auth/register", {
           fullName: regFullName,
           phoneNumber: regPhoneNum,
           userName: regUserName,
@@ -202,7 +202,7 @@ export default function SignInUp() {
       //console.log(loginUserNameIsValid + " " + loginPwdIsValid);
       setIsLoggingIn(true);
       try {
-        const res = await axios.post(getCurrentURL() + "/auth", {
+        const res = await axios.post(getCurrentURL() + "/auth/login", {
           userName: loginUserName,
           password: loginUserPwd,
         });
