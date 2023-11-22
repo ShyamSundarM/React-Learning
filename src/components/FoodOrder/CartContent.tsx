@@ -102,7 +102,9 @@ const CartContent = () => {
     }) {
       setIsOrderCreating(true);
       try {
-        var resp = await axios.post(getCurrentURL() + "/food/order", data);
+        var resp = await axios.post(getCurrentURL() + "/food/order", data, {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        });
         if (resp.status === 200) {
           resetFormState();
           resetCart();
