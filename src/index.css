@@ -25,3 +25,7 @@ nav {
 .form-control {
   margin-bottom: 12px;
 }
+
+/* .accordion-button::after {
+  margin-left: 6px !important;
+} */
