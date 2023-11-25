@@ -26,6 +26,10 @@ nav {
   margin-bottom: 12px;
 }
 
-/* .accordion-button::after {
-  margin-left: 6px !important;
-} */
+#DrawerAppsAccordion .accordion-body {
+  padding: 0px;
+}
+
+.accordion-button::after {
+  margin-left: 30px !important;
+}

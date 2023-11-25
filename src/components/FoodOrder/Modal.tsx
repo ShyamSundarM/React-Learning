@@ -9,20 +9,25 @@ type Props = {
 
 export default function Modal(props: PropsWithChildren<Props>) {
   return (
-    <AnimatePresence>
-      {props.modalOpen && (
-        <motion.div
-          initial={{ opacity: 0, y: 80 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: 80 }}
-          onClick={() => props.setModalOpen(false)}
-          className={styles.background}
-        >
-          <div className={styles.content} onClick={(e) => e.stopPropagation()}>
-            {props.children}
-          </div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+    <div className={styles.modalRoot}>
+      <AnimatePresence>
+        {props.modalOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: 80 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 80 }}
+            onClick={() => props.setModalOpen(false)}
+            className={styles.background}
+          >
+            <div
+              className={styles.content}
+              onClick={(e) => e.stopPropagation()}
+            >
+              {props.children}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
   );
 }

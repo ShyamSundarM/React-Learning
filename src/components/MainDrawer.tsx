@@ -24,13 +24,17 @@ export default function MainDrawer(props: Props) {
   const navigate = useNavigate();
   return (
     <SwipeableDrawer
+      className={styles.Drawer}
       anchor="left"
       open={props.sideBarOpen}
       onClose={() => props.setSideBarOpen(false)}
       onOpen={() => props.setSideBarOpen(true)}
     >
       <div className={styles.DrawerContainer}>
-        <div className={`accordion ${styles.appsAccordion}`}>
+        <div
+          className={`accordion ${styles.appsAccordion}`}
+          id="DrawerAppsAccordion"
+        >
           <div className="accordion-item">
             <h2 className="accordion-header">
               <button
@@ -50,8 +54,25 @@ export default function MainDrawer(props: Props) {
               aria-labelledby="headingOne"
               data-bs-parent="#accordionExample"
             >
-              <div className="accordion-body">
-                <strong>This is the first item's accordion body.</strong>
+              <div className={`accordion-body ${styles.appsAccordionBody}`}>
+                <div
+                  className={styles.listItem}
+                  onClick={() => {
+                    navigate("TableGenerator");
+                    props.setSideBarOpen(false);
+                  }}
+                >
+                  <div className={styles.listItemTitle}>Table Generator</div>
+                </div>
+                <div
+                  className={styles.listItem}
+                  onClick={() => {
+                    navigate("FoodOrder");
+                    props.setSideBarOpen(false);
+                  }}
+                >
+                  <div className={styles.listItemTitle}>Food Order</div>
+                </div>
               </div>
             </div>
           </div>

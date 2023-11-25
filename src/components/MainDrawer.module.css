@@ -2,3 +2,28 @@
 }
 .appsAccordion {
 }
+
+.Drawer {
+  width: 1px;
+}
+
+.listItem {
+  padding: 1rem;
+  cursor: pointer;
+}
+
+.listItem:hover {
+  background-color: rgb(195, 247, 255);
+  .listItemTitle {
+    color: rgb(1, 26, 255);
+  }
+}
+
+.listItemTitle {
+}
+
+.divider {
+  border-top: 1px solid #bbb;
+  width: 90%;
+  margin: 0px auto;
+}
