@@ -25,3 +25,11 @@ nav {
 .form-control {
   margin-bottom: 12px;
 }
+
+#DrawerAppsAccordion .accordion-body {
+  padding: 0px;
+}
+
+.accordion-button::after {
+  margin-left: 30px !important;
+}
