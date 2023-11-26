@@ -1,6 +1,14 @@
 import { Slide, SlideProps } from "@mui/material";
 import { PropsWithChildren, createContext, useState } from "react";
 
+export type User = {
+  id: string;
+  fullName: string;
+  uName: string;
+  phoneNumber: string;
+  role: string;
+};
+
 type ContextType = {
   setLoginSnackBarVisible: (status: boolean) => void;
   setRegisterSnackBarVisible: (status: boolean) => void;
@@ -10,6 +18,8 @@ type ContextType = {
   setRegisterStatusData: (data: { message: string; code: number }) => void;
   loginStatusData: { message: string; code: number };
   registerStatusData: { message: string; code: number };
+  LoggedUser: User;
+  setLoggedUser: (user: User, expiresInMs: number) => void;
 };
 export const AppContext = createContext<ContextType>({
   setLoginSnackBarVisible: (status: boolean) => {},
@@ -20,11 +30,14 @@ export const AppContext = createContext<ContextType>({
   setRegisterStatusData: (data: { message: string; code: number }) => {},
   loginStatusData: { message: "", code: 0 },
   registerStatusData: { message: "", code: 0 },
+  LoggedUser: null,
+  setLoggedUser: (user: User, expiresInMs: number) => {},
 });
 
 export function AppContextProvider(props: PropsWithChildren) {
   const [snackBarVisible, setSnackBarVisible] = useState(false);
   const [regSnackBarVisible, setRegSnackBarVisible] = useState(false);
+  const [LoggedUser, setLoggedUser] = useState(null);
   const [logStatusData, setLogStatusData] = useState<{
     message: string;
     code: number;
@@ -33,6 +46,10 @@ export function AppContextProvider(props: PropsWithChildren) {
     message: string;
     code: number;
   }>({ message: "", code: 0 });
+  function setCurrentLoggedUser(user: User, expiresInMs: number) {
+    setLoggedUser(user);
+    const logOutTimer = setTimeout(() => localStorage.clear(), expiresInMs);
+  }
   function setLoginStatusData(data: { message: string; code: number }) {
     setLogStatusData(data);
   }
@@ -56,6 +73,8 @@ export function AppContextProvider(props: PropsWithChildren) {
         setRegisterStatusData,
         loginStatusData: logStatusData,
         registerStatusData: regStatusData,
+        LoggedUser,
+        setLoggedUser: setCurrentLoggedUser,
       }}
     >
       {props.children}
