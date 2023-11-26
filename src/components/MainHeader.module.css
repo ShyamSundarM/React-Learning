@@ -1,0 +1,37 @@
+.nameContainer {
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 14px;
+  display: flex;
+  flex-direction: row;
+  float: right;
+  cursor: pointer;
+  position: relative;
+}
+
+.toolBar {
+  justify-content: space-between;
+  position: relative;
+  z-index: 10000;
+}
+
+.logoutContainer {
+  display: flex;
+  flex-direction: row;
+}
+.logoutIcon {
+  margin-left: 10px;
+}
+.dropdownItems {
+  position: absolute;
+  margin-top: 14px;
+  transform: translateY(100%);
+
+  right: -4px;
+}
+.dropdownItem {
+  border: 1px solid #ff7e7e;
+  background-color: rgb(90, 132, 132);
+  padding: 6px 10px;
+  border-radius: 14px;
+}

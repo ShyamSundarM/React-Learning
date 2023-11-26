@@ -9,9 +9,13 @@ import { LoadingButton } from "@mui/lab";
 import { getCurrentURL } from "./Shared";
 import { AnimatePresence, motion } from "framer-motion";
 import Modal from "./Modal";
+import { AppContext } from "../../context/app-context";
+import { useNavigate } from "react-router-dom";
 
 const CartContent = () => {
   const foodCtx = useContext(FoodContext);
+  const appCtx = useContext(AppContext);
+  const navigate = useNavigate();
   const { foodItems } = foodCtx;
   const cartData = foodItems.filter((f) => f.chosenCount > 0);
   const netItemAmount = foodCtx.foodItems.reduce((total, f) => {
@@ -114,6 +118,11 @@ const CartContent = () => {
         setIsOrderCreating(false);
       } catch (e: any) {
         setIsOrderCreating(false);
+        if (e.response.status === 401) {
+          appCtx.setLoggedUser(null, 0);
+          localStorage.clear();
+          navigate("/");
+        }
       }
     }
   }, [formValid, shouldValidateForm]);

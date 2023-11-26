@@ -8,17 +8,19 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { getCurrentURL } from "./Shared";
 import { AppContext } from "../../context/app-context";
 import { AnimatePresence, motion } from "framer-motion";
+import { FoodContext } from "../../context/food-context";
 export type ValidatorFnObj = {
   isEmpty?: (value: string) => boolean;
   length?: (value: string) => boolean;
   matchErr?: (value: string) => boolean;
   regexRequired?: (value: string) => boolean;
-  checkUserName?: (value: string) => Promise<boolean>;
+  checkUserName?: (value: string) => Promise<boolean | void>;
 };
 
 export default function SignInUp() {
   const [queryParams] = useSearchParams();
   const AppCtx = useContext(AppContext);
+  const foodCtx = useContext(FoodContext);
   const navigate = useNavigate();
   var formState = "login";
   if (queryParams.get("mode") === "login") {
@@ -66,7 +68,7 @@ export default function SignInUp() {
   } = useInput({
     isEmpty: (value: string) => value.trim() !== "",
     regexRequired: (value: string) =>
-      new RegExp("^[6789]{1}[1-9]{9}$").test(value),
+      new RegExp("^[6789]{1}[0-9]{9}$").test(value),
   });
   const {
     enteredValue: regUserName,
@@ -169,7 +171,7 @@ export default function SignInUp() {
           password: regPwd,
         });
         if (res.status === 200) {
-          if (res.data === "1") {
+          if (res.data === 1) {
             AppCtx.setRegisterStatusData({
               message: "Registration Success",
               code: 200,
@@ -194,6 +196,25 @@ export default function SignInUp() {
     }
   }
 
+  function getUtcTimeDifference(date: string) {
+    var currentDate = new Date();
+    var utcHours = currentDate.getUTCHours();
+    var utcMinutes = currentDate.getUTCMinutes();
+    var utcSeconds = currentDate.getUTCSeconds();
+    var timeInMillis =
+      utcHours * 60 * 60 * 1000 + utcMinutes * 60 * 1000 + utcSeconds * 1000;
+
+    var expires = new Date(date);
+    var expiresHours = expires.getUTCHours();
+    var expiresMinutes = expires.getUTCMinutes();
+    var expiresSeconds = expires.getUTCSeconds();
+    var expiresInMillis =
+      expiresHours * 60 * 60 * 1000 +
+      expiresMinutes * 60 * 1000 +
+      expiresSeconds * 1000;
+    return expiresInMillis - timeInMillis;
+  }
+
   async function loginFormSubmitHandler(event: BaseSyntheticEvent) {
     event.preventDefault();
     AppCtx.setLoginStatusData({ message: "", code: 0 });
@@ -206,10 +227,13 @@ export default function SignInUp() {
           userName: loginUserName,
           password: loginUserPwd,
         });
-        //console.log(res);
         if (res.status === 200) {
+          AppCtx.setLoggedUser(
+            res.data.user,
+            getUtcTimeDifference(res.data.expiresIn)
+          );
           localStorage.setItem("token", res.data.token);
-          localStorage.setItem("expires", res.data.expiresIn);
+          localStorage.setItem("uname", res.data.user.uName);
           AppCtx.setLoginStatusData({ message: "Login Success", code: 200 });
           navigate("/HomePage", { replace: true });
         }
