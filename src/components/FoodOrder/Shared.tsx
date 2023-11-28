@@ -3,5 +3,5 @@ export const ApiDevUrl = "http://localhost/RProjApi/api";
 export const ApiCurrentUrl = "http://localhost:60307/api";
 
 export function getCurrentURL() {
-  return ApiCurrentUrl;
+  return ApiProdUrl;
 }
