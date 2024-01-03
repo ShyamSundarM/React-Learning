@@ -35,7 +35,6 @@ export default function MainHeader(props: Props) {
               onClick={() =>
                 setArrowIconAngle((prev) => (prev === 180 ? 0 : 180))
               }
-              //onMouseOut={() => setArrowIconAngle(0)}
             >
               <div className={styles.name}>
                 Hi {localStorage.getItem("uname")}
