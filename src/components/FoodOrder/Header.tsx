@@ -3,6 +3,7 @@ import Cart from "./Cart";
 import styles from "./Header.module.css";
 import { FoodContext } from "../../context/food-context";
 import { AnimatePresence } from "framer-motion";
+import { AppBar, Toolbar } from "@mui/material";
 
 export default function Header() {
   const foodCtx = useContext(FoodContext);
@@ -10,13 +11,19 @@ export default function Header() {
     return total + f.chosenCount;
   }, 0);
   return (
-    <nav className={`navbar navbar-light bg-dark ${styles.container}`}>
-      <a className={`navbar-brand ${styles.title}`} href="#">
-        React Food Order
-      </a>
-      <div className={styles.cartPos}>
-        <Cart key={!foodCtx.modalOpen ? totalCount : ""} />
-      </div>
-    </nav>
+    <AppBar
+      position="static"
+      className={styles.AppBar}
+      style={{ backgroundColor: "#000000" }}
+    >
+      <Toolbar className={`${styles.container}`}>
+        <a className={`${styles.title}`} href="#">
+          React Food Order
+        </a>
+        <div className={styles.cartPos}>
+          <Cart key={!foodCtx.modalOpen ? totalCount : ""} />
+        </div>
+      </Toolbar>
+    </AppBar>
   );
 }
