@@ -11,12 +11,13 @@ import {
   RouterProvider,
   createBrowserRouter,
   createRoutesFromElements,
+  useNavigate,
 } from "react-router-dom";
 import SignInUp from "./components/FoodOrder/SignInUp";
 import HomePage from "./components/HomePage";
 import { Alert, Slide, SlideProps, Snackbar } from "@mui/material";
-import { useContext } from "react";
-import { AppContext } from "./context/app-context";
+import { useContext, useEffect } from "react";
+import { AppContext, User } from "./context/app-context";
 
 function SlideTransition(props: SlideProps) {
   return <Slide {...props} direction="down" />;

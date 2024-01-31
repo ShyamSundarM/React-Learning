@@ -9,6 +9,9 @@ import { getCurrentURL } from "./Shared";
 import { AppContext } from "../../context/app-context";
 import { AnimatePresence, motion } from "framer-motion";
 import { FoodContext } from "../../context/food-context";
+import { authActions } from "../../store/auth-slice";
+import { useDispatch } from "react-redux";
+
 export type ValidatorFnObj = {
   isEmpty?: (value: string) => boolean;
   length?: (value: string) => boolean;
@@ -18,6 +21,7 @@ export type ValidatorFnObj = {
 };
 
 export default function SignInUp() {
+  const dispatch = useDispatch();
   const [queryParams] = useSearchParams();
   const AppCtx = useContext(AppContext);
   const foodCtx = useContext(FoodContext);
@@ -196,25 +200,6 @@ export default function SignInUp() {
     }
   }
 
-  function getUtcTimeDifference(date: string) {
-    var currentDate = new Date();
-    var utcHours = currentDate.getUTCHours();
-    var utcMinutes = currentDate.getUTCMinutes();
-    var utcSeconds = currentDate.getUTCSeconds();
-    var timeInMillis =
-      utcHours * 60 * 60 * 1000 + utcMinutes * 60 * 1000 + utcSeconds * 1000;
-
-    var expires = new Date(date);
-    var expiresHours = expires.getUTCHours();
-    var expiresMinutes = expires.getUTCMinutes();
-    var expiresSeconds = expires.getUTCSeconds();
-    var expiresInMillis =
-      expiresHours * 60 * 60 * 1000 +
-      expiresMinutes * 60 * 1000 +
-      expiresSeconds * 1000;
-    return expiresInMillis - timeInMillis;
-  }
-
   async function loginFormSubmitHandler(event: BaseSyntheticEvent) {
     event.preventDefault();
     AppCtx.setLoginStatusData({ message: "", code: 0 });
@@ -228,12 +213,13 @@ export default function SignInUp() {
           password: loginUserPwd,
         });
         if (res.status === 200) {
-          AppCtx.setLoggedUser(
-            res.data.user,
-            getUtcTimeDifference(res.data.expiresIn)
+          dispatch(
+            authActions.setLoginData({
+              user: res.data.user,
+              expiresIn: res.data.expiresIn,
+              token: res.data.token,
+            })
           );
-          localStorage.setItem("token", res.data.token);
-          localStorage.setItem("uname", res.data.user.uName);
           AppCtx.setLoginStatusData({ message: "Login Success", code: 200 });
           navigate("/HomePage", { replace: true });
         }

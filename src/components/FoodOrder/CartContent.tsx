@@ -9,10 +9,15 @@ import { LoadingButton } from "@mui/lab";
 import { getCurrentURL } from "./Shared";
 import { AnimatePresence, motion } from "framer-motion";
 import Modal from "./Modal";
-import { AppContext } from "../../context/app-context";
+import { AppContext, User } from "../../context/app-context";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { authActions } from "../../store/auth-slice";
+import { useDispatch } from "react-redux";
 
 const CartContent = () => {
+  const token = useSelector((s: any) => s.auth.token) as string;
+  const dispatch = useDispatch();
   const foodCtx = useContext(FoodContext);
   const appCtx = useContext(AppContext);
   const navigate = useNavigate();
@@ -107,7 +112,7 @@ const CartContent = () => {
       setIsOrderCreating(true);
       try {
         var resp = await axios.post(getCurrentURL() + "/food/order", data, {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+          headers: { Authorization: `Bearer ${token}` },
         });
         if (resp.status === 200) {
           resetFormState();
@@ -119,8 +124,13 @@ const CartContent = () => {
       } catch (e: any) {
         setIsOrderCreating(false);
         if (e.response.status === 401) {
-          appCtx.setLoggedUser(null, 0);
-          localStorage.clear();
+          dispatch(
+            authActions.setLoginData({
+              user: null,
+              expiresIn: null,
+              token: null,
+            })
+          );
           navigate("/");
         }
       }

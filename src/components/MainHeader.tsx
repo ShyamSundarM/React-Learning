@@ -1,12 +1,16 @@
 import { AppBar, Toolbar } from "@mui/material";
 import Hamburger from "hamburger-react";
 import { Dispatch, SetStateAction, useContext, useState } from "react";
-import { AppContext } from "../context/app-context";
+import { AppContext, User } from "../context/app-context";
 import styles from "./MainHeader.module.css";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { AnimatePresence, motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { RootState } from "../store/redux-store";
+import authSlice, { authActions } from "../store/auth-slice";
+import { useDispatch } from "react-redux";
 
 type Props = {
   sideBarOpen: boolean;
@@ -14,8 +18,11 @@ type Props = {
 };
 export default function MainHeader(props: Props) {
   const appCtx = useContext(AppContext);
+  const userName = useSelector((s: any) => s.auth.user?.userName) as string;
+  const user = useSelector((s: any) => s.auth.user) as User;
   const navigate = useNavigate();
   const [arrowIconAngle, setArrowIconAngle] = useState(0);
+  const dispatch = useDispatch();
   return (
     <>
       <AppBar position="static">
@@ -29,7 +36,7 @@ export default function MainHeader(props: Props) {
             toggled={props.sideBarOpen}
             toggle={() => props.setSideBarOpen((prev) => !prev)}
           />
-          {localStorage.getItem("token") && (
+          {user && (
             <div
               className={styles.nameContainer}
               onClick={() =>
@@ -37,7 +44,7 @@ export default function MainHeader(props: Props) {
               }
             >
               <div className={styles.name}>
-                Hi {localStorage.getItem("uname")}
+                Hi {userName ? userName : "unknown"}
               </div>
               <motion.div animate={{ rotate: arrowIconAngle }}>
                 <KeyboardArrowUpIcon className={styles.arrowIcon} />
@@ -53,8 +60,13 @@ export default function MainHeader(props: Props) {
                     <div
                       className={`${styles.logoutContainer} ${styles.dropdownItem}`}
                       onClick={() => {
-                        localStorage.clear();
-                        appCtx.setLoggedUser(null, 0);
+                        dispatch(
+                          authActions.setLoginData({
+                            user: null,
+                            expiresIn: null,
+                            token: null,
+                          })
+                        );
                         navigate("/");
                       }}
                     >

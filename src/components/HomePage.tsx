@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import MainHeader from "./MainHeader";
 import MainDrawer from "./MainDrawer";
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 
 export default function HomePage() {
   const [sideBarOpen, setSideBarOpen] = useState(false);
