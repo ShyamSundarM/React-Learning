@@ -1,9 +1,43 @@
 import { Action, configureStore } from "@reduxjs/toolkit";
+import authSlice, { AuthStateType } from "./auth-slice";
+import {
+  persistStore,
+  persistReducer,
+  PersistConfig,
+  createTransform,
+} from "redux-persist";
+import storage from "redux-persist/lib/storage";
+import { User } from "../context/app-context";
+import CryptoJS from "crypto-js";
 
 const initialState = { count: 0 };
 interface State {
   count: number;
 }
+
+const encrypt = createTransform(
+  (inboundState: string, key) => {
+    if (!inboundState) return inboundState;
+    const cryptedText = CryptoJS.AES.encrypt(
+      JSON.stringify(inboundState),
+      "secret key 123"
+    );
+
+    return cryptedText.toString();
+  },
+  (outboundState: string, key) => {
+    if (!outboundState) return outboundState;
+    const bytes = CryptoJS.AES.decrypt(outboundState, "secret key 123");
+    const decrypted = bytes.toString(CryptoJS.enc.Utf8);
+
+    return JSON.parse(decrypted);
+  }
+);
+const persistConfig: PersistConfig<AuthStateType, any, any, any> = {
+  key: "root",
+  storage,
+  transforms: [encrypt],
+};
 
 const reducerFn = (state: State = initialState, action: Action) => {
   switch (action.type) {
@@ -15,8 +49,14 @@ const reducerFn = (state: State = initialState, action: Action) => {
   return state;
 };
 const store = configureStore({
-  reducer: reducerFn,
+  reducer: {
+    //test: persistReducer(persistConfig, reducerFn),
+    auth: persistReducer(persistConfig, authSlice.reducer),
+  },
+  middleware: (middleware) => middleware({ serializableCheck: false }),
 });
+
+export const persistor = persistStore(store);
 
 export default store;
 export type RootState = ReturnType<typeof store.getState>;

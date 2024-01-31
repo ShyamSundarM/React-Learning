@@ -1,5 +1,6 @@
 import { Slide, SlideProps } from "@mui/material";
 import { PropsWithChildren, createContext, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export type User = {
   id: string;
@@ -35,6 +36,7 @@ export const AppContext = createContext<ContextType>({
 });
 
 export function AppContextProvider(props: PropsWithChildren) {
+  //const navigate = useNavigate();
   const [snackBarVisible, setSnackBarVisible] = useState(false);
   const [regSnackBarVisible, setRegSnackBarVisible] = useState(false);
   const [LoggedUser, setLoggedUser] = useState(null);
@@ -48,7 +50,9 @@ export function AppContextProvider(props: PropsWithChildren) {
   }>({ message: "", code: 0 });
   function setCurrentLoggedUser(user: User, expiresInMs: number) {
     setLoggedUser(user);
-    const logOutTimer = setTimeout(() => localStorage.clear(), expiresInMs);
+    const logOutTimer = setTimeout(() => {
+      //navigate("/");
+    }, expiresInMs);
   }
   function setLoginStatusData(data: { message: string; code: number }) {
     setLogStatusData(data);

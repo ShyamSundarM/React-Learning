@@ -9,8 +9,12 @@ import useCounter from "./hooks/counter-hook";
 import { getCurrentURL } from "./Shared";
 import { AppContext } from "../../context/app-context";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { authActions } from "../../store/auth-slice";
 
 export default function FoodOrderRoot() {
+  const token = useSelector((s: any) => s.auth.token) as string;
+  const dispatch = useDispatch();
   const foodCtx = useContext(FoodContext);
   const appCtx = useContext(AppContext);
   const navigate = useNavigate();
@@ -24,7 +28,7 @@ export default function FoodOrderRoot() {
           getCurrentURL() + "/food/getAll",
           {
             headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
+              Authorization: `Bearer ${token}`,
             },
           }
         );
@@ -36,8 +40,13 @@ export default function FoodOrderRoot() {
         foodCtx.setDataLoadedFlag(true);
       } catch (err: any) {
         if (err.response.status === 401) {
-          appCtx.setLoggedUser(null, 0);
-          localStorage.clear();
+          dispatch(
+            authActions.setLoginData({
+              user: null,
+              expiresIn: null,
+              token: null,
+            })
+          );
           navigate("/");
         }
       }
