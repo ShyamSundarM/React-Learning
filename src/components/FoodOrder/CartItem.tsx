@@ -6,7 +6,7 @@ import { FoodContext } from "../../context/food-context";
 import { Skeleton } from "@mui/material";
 
 type Props = {
-  id: number;
+  id: string;
   name: string;
   image: string;
   count: number;

@@ -11,6 +11,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../store/redux-store";
 import authSlice, { authActions } from "../store/auth-slice";
 import { useDispatch } from "react-redux";
+import { UserRole } from "../enums/UserRole";
 
 type Props = {
   sideBarOpen: boolean;

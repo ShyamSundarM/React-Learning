@@ -39,7 +39,8 @@ export default function FoodOrderRoot() {
         foodCtx.setAllFoodItems(foodData);
         foodCtx.setDataLoadedFlag(true);
       } catch (err: any) {
-        if (err.response.status === 401) {
+        if (err.response?.status === 401) {
+          navigate("/");
           dispatch(
             authActions.setLoginData({
               user: null,
@@ -47,8 +48,8 @@ export default function FoodOrderRoot() {
               token: null,
             })
           );
-          navigate("/");
         }
+        navigate("/");
       }
     }
     get();

@@ -4,11 +4,40 @@ import FoodItem from "./FoodItem";
 import styles from "./Content.module.css";
 import { motion } from "framer-motion";
 import CartContent from "./CartContent";
+import { Button } from "@mui/material";
+import { useSelector } from "react-redux";
+import { User } from "../../context/app-context";
+import { UserRole } from "../../enums/UserRole";
 
 export default function Content() {
   const foodCtx = useContext(FoodContext);
+  const user = useSelector((s: any) => s.auth.user) as User;
+
+  function newFoodItemClickHandler(event: any): void {
+    var foodData = foodCtx.foodItems;
+    foodData.unshift({
+      id: "",
+      name: "",
+      image: "",
+      description: "",
+      price: 0,
+      chosenCount: 0,
+    });
+    foodCtx.setAllFoodItems([...foodData]);
+  }
+
   return (
     <>
+      {user?.role === UserRole.Admin && (
+        <Button
+          onClick={newFoodItemClickHandler}
+          variant="contained"
+          color="primary"
+          className={styles.AddButton}
+        >
+          Add New Item
+        </Button>
+      )}
       <motion.ul
         className={styles.container}
         animate={{ transition: { staggerChildren: 0.5 } }}
@@ -22,6 +51,7 @@ export default function Content() {
               image={food.image}
               count={food.chosenCount}
               price={food.price}
+              description={food.description}
             />
           );
         })}

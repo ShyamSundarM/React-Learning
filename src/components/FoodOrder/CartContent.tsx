@@ -105,7 +105,7 @@ const CartContent = () => {
       phone: string;
       netAmount: number;
       cartItems: {
-        id: number;
+        id: string;
         count: number;
       }[];
     }) {
