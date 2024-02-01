@@ -4,7 +4,7 @@ import styles from "./Counter.module.css";
 
 type Props = {
   count: number;
-  id: number;
+  id: string;
 };
 
 export default function Counter(this: any, props: Props) {

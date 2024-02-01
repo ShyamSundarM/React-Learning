@@ -6,13 +6,37 @@
   transition: transform 0.2s ease-in-out;
 }
 
+.counter {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
 .image:hover {
   transform: scale(1.1);
 }
 
+.CancelEditIcon {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  border: none;
+  background: none;
+  padding: 0px;
+}
+
+.DeleteIcon {
+  border: none;
+  background: none;
+  padding: 0px;
+}
+
 .container {
   display: flex;
+  position: relative;
   justify-content: space-between;
+  gap: 15px;
   align-items: center;
   margin: 12px 10px;
   padding: 8px;
