@@ -11,6 +11,8 @@ import { UserRole } from "../../enums/UserRole";
 
 export default function Content() {
   const foodCtx = useContext(FoodContext);
+  const isUnsavedItemPresent =
+    foodCtx.foodItems.find((f) => f.id === "") !== undefined;
   const user = useSelector((s: any) => s.auth.user) as User;
 
   function newFoodItemClickHandler(event: any): void {
@@ -34,6 +36,7 @@ export default function Content() {
           variant="contained"
           color="primary"
           className={styles.AddButton}
+          disabled={isUnsavedItemPresent}
         >
           Add New Item
         </Button>

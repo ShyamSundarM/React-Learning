@@ -62,10 +62,16 @@ export default function FoodItem(props: Props) {
   function closeBtnClickHandler() {
     if (!isModified) {
       setIsEditMode(false);
+      if (props.id === "") {
+        foodCtx.deleteFoodItem("");
+      }
     } else {
       if (window.confirm("Changes will be lost, close ?")) {
         setIsEditMode(false);
         setIsModified(false);
+        if (props.id === "") {
+          foodCtx.deleteFoodItem("");
+        }
       }
     }
   }
