@@ -28,15 +28,19 @@ export default function MainHeader(props: Props) {
     <>
       <AppBar position="static">
         <Toolbar className={styles.toolBar}>
-          <Hamburger
-            rounded
-            duration={0.5}
-            color="#FFFFFF"
-            direction="right"
-            size={24}
-            toggled={props.sideBarOpen}
-            toggle={() => props.setSideBarOpen((prev) => !prev)}
-          />
+          <div>
+            <Hamburger
+              rounded
+              duration={0.5}
+              color="#FFFFFF"
+              direction="right"
+              size={24}
+              toggled={props.sideBarOpen}
+              toggle={() => props.setSideBarOpen((prev) => !prev)}
+            />
+            <div className={`mb-2`}>Access Level : {user?.role}</div>
+          </div>
+
           {user && (
             <div
               className={styles.nameContainer}

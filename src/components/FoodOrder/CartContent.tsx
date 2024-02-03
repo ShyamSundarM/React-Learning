@@ -14,8 +14,18 @@ import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { authActions } from "../../store/auth-slice";
 import { useDispatch } from "react-redux";
+import Lottie from "react-lottie";
+import * as animationData from "../../AnimFiles/order-success.json";
 
 const CartContent = () => {
+  const defaultOptions = {
+    loop: false,
+    autoplay: true,
+    animationData: animationData,
+    rendererSettings: {
+      preserveAspectRatio: "xMidYMid slice",
+    },
+  };
   const token = useSelector((s: any) => s.auth.token) as string;
   const dispatch = useDispatch();
   const foodCtx = useContext(FoodContext);
@@ -27,6 +37,7 @@ const CartContent = () => {
     return total + f.chosenCount * f.price;
   }, 0);
   const [shouldValidateForm, setShouldValidateForm] = useState(false);
+  const [modalContentShown, setModalContentShown] = useState(true);
   const [isOrderCreating, setIsOrderCreating] = useState(false);
   const [formValid, setFormValid] = useState<{
     name: boolean;
@@ -92,9 +103,10 @@ const CartContent = () => {
       const data = {
         name: formValues.name,
         address: formValues.address,
-        phone: formValues.phone,
+        phoneNumber: formValues.phone,
         netAmount: netItemAmount,
-        cartItems: cartItems,
+        foodItemIds: cartItems,
+        orderDateTime: new Date().toISOString(),
       };
       //console.log(JSON.stringify(data));
       updateDatabase(data);
@@ -102,13 +114,15 @@ const CartContent = () => {
     async function updateDatabase(data: {
       name: string;
       address: string;
-      phone: string;
+      phoneNumber: string;
       netAmount: number;
-      cartItems: {
+      foodItemIds: {
         id: string;
         count: number;
       }[];
+      orderDateTime: string;
     }) {
+      console.log(JSON.stringify(data));
       setIsOrderCreating(true);
       try {
         var resp = await axios.post(getCurrentURL() + "/food/order", data, {
@@ -118,7 +132,7 @@ const CartContent = () => {
           resetFormState();
           resetCart();
           setFormState("cart");
-          foodCtx.setModalOpen(false);
+          setModalContentShown(false);
         }
         setIsOrderCreating(false);
       } catch (e: any) {
@@ -164,61 +178,79 @@ const CartContent = () => {
   }
   return (
     <Modal modalOpen={foodCtx.modalOpen} setModalOpen={foodCtx.setModalOpen}>
-      <div className={styles.rootContainer}>
-        <div className={styles.modalHeader}>
-          <div className={styles.modalTitle}>{modalTitle}</div>
-          <Divider color="rgb(91, 86, 86);" className="" />
-        </div>
-
-        {cartData.length === 0 ? (
-          <div className={styles.noItems}>
-            Cart is empty, please go through my list of wonderful dishes
+      {!modalContentShown && (
+        <Lottie
+          options={defaultOptions}
+          height={200}
+          width={200}
+          eventListeners={[
+            {
+              eventName: "complete",
+              callback: () => {
+                foodCtx.setModalOpen(false);
+                setModalContentShown(true);
+              },
+            },
+          ]}
+        />
+      )}
+      {modalContentShown && (
+        <div className={styles.rootContainer}>
+          <div className={styles.modalHeader}>
+            <div className={styles.modalTitle}>{modalTitle}</div>
+            <Divider color="rgb(91, 86, 86);" className="" />
           </div>
-        ) : (
-          content
-        )}
-        {cartData.length > 0 && (
-          <>
-            <div className={styles.footer}>
-              <Divider color="rgb(91, 86, 86);" className="mt-3" />
-              <div className={styles.footerElements}>
-                <div className={styles.netItemAmount}>
-                  Total Payable :{" "}
-                  <span className={styles.itemSum}>{netItemAmount}₹</span>
-                </div>
-                <div className={styles.footerBtns}>
-                  {formState === "cart" && (
-                    <button
-                      onClick={checkoutClickHandler}
-                      className={`btn btn-success ${styles.checkOutBtn}`}
-                    >
-                      Checkout
-                    </button>
-                  )}
-                  {formState === "form" && (
-                    <>
-                      <LoadingButton
-                        variant="contained"
-                        loading={isOrderCreating}
-                        onClick={placeOrderClickHandler}
+
+          {cartData.length === 0 ? (
+            <div className={styles.noItems}>
+              Cart is empty, please go through my list of wonderful dishes
+            </div>
+          ) : (
+            content
+          )}
+          {cartData.length > 0 && (
+            <>
+              <div className={styles.footer}>
+                <Divider color="rgb(91, 86, 86);" className="mt-3" />
+                <div className={styles.footerElements}>
+                  <div className={styles.netItemAmount}>
+                    Total Payable :{" "}
+                    <span className={styles.itemSum}>{netItemAmount}₹</span>
+                  </div>
+                  <div className={styles.footerBtns}>
+                    {formState === "cart" && (
+                      <button
+                        onClick={checkoutClickHandler}
                         className={`btn btn-success ${styles.checkOutBtn}`}
                       >
-                        Order
-                      </LoadingButton>
-                      <button
-                        onClick={cancelClickHandler}
-                        className={`btn btn-danger ${styles.checkOutBtn}`}
-                      >
-                        Cancel
+                        Checkout
                       </button>
-                    </>
-                  )}
+                    )}
+                    {formState === "form" && (
+                      <>
+                        <LoadingButton
+                          variant="contained"
+                          loading={isOrderCreating}
+                          onClick={placeOrderClickHandler}
+                          className={`btn btn-success ${styles.checkOutBtn}`}
+                        >
+                          Order
+                        </LoadingButton>
+                        <button
+                          onClick={cancelClickHandler}
+                          className={`btn btn-danger ${styles.checkOutBtn}`}
+                        >
+                          Cancel
+                        </button>
+                      </>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
-          </>
-        )}
-      </div>
+            </>
+          )}
+        </div>
+      )}
     </Modal>
   );
 };
