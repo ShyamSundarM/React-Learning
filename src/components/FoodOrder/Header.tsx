@@ -24,7 +24,7 @@ export default function Header() {
       <Toolbar className={`${styles.container}`}>
         <div className={styles.leftItems}>
           <Link className={`${styles.title}`} to="/HomePage/FoodOrder">
-            React Food Order
+            <span className={styles.ReactText}>React </span>Food Order
           </Link>
           {user.role === UserRole.Admin && (
             <NavLink
