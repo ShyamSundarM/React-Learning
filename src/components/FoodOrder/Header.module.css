@@ -1,13 +1,14 @@
 .title {
-  margin-left: 10px;
   color: white;
   text-decoration: none;
   font-size: larger;
   align-self: center;
 }
 
-.cartPos {
-  margin-right: 10px;
+@media only screen and (max-width: 700px) {
+  .ReactText {
+    display: none;
+  }
 }
 
 .container {

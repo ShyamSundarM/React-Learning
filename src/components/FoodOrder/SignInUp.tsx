@@ -173,18 +173,18 @@ export default function SignInUp() {
           phoneNumber: regPhoneNum,
           userName: regUserName,
           password: regPwd,
+          emailId: null,
+          roleId: 1,
         });
         if (res.status === 200) {
-          if (res.data === 1) {
-            AppCtx.setRegisterStatusData({
-              message: "Registration Success",
-              code: 200,
-            });
-            resetRegistrationForm();
-            navigate("?mode=login");
-          } else {
-            AppCtx.setRegisterStatusData({ message: res.data, code: 500 });
-          }
+          AppCtx.setRegisterStatusData({
+            message: "Registration Success",
+            code: 200,
+          });
+          resetRegistrationForm();
+          navigate("?mode=login");
+        } else {
+          AppCtx.setRegisterStatusData({ message: res.data, code: 500 });
         }
       } catch (ex: any) {
         handleError(ex);

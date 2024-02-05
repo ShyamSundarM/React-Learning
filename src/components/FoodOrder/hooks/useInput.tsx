@@ -49,6 +49,7 @@ export default function useInput(validatorFnObj: ValidatorFnObj = null) {
   }
   function clearInput() {
     setEnteredValue("");
+    setIsTouched(false);
   }
 
   return {
