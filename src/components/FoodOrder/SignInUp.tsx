@@ -11,6 +11,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { FoodContext } from "../../context/food-context";
 import { authActions } from "../../store/auth-slice";
 import { useDispatch } from "react-redux";
+import { DbConfigType, dbConfigActions } from "../../store/db-config-slice";
 
 export type ValidatorFnObj = {
   isEmpty?: (value: string) => boolean;
@@ -24,7 +25,6 @@ export default function SignInUp() {
   const dispatch = useDispatch();
   const [queryParams] = useSearchParams();
   const AppCtx = useContext(AppContext);
-  const foodCtx = useContext(FoodContext);
   const navigate = useNavigate();
   var formState = "login";
   if (queryParams.get("mode") === "login") {
@@ -199,7 +199,30 @@ export default function SignInUp() {
       regRePwdBlurHandler();
     }
   }
-
+  async function loadConfigParameters(token: string) {
+    var resp = await axios.get<DbConfigType>(
+      getCurrentURL() + "/DbConfig/GetAllValues",
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+    if (resp.status === 200) {
+      console.log(resp.data);
+      dispatch(dbConfigActions.setAllParams(resp.data));
+    }
+  }
+  async function getIndex(token: string): Promise<string> {
+    var resp = await axios.get<string>(
+      getCurrentURL() + "/DbConfig/GetConfigValue/Index_HomePage",
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+    if (resp.status === 200) {
+      return resp.data;
+    }
+    return null;
+  }
   async function loginFormSubmitHandler(event: BaseSyntheticEvent) {
     event.preventDefault();
     AppCtx.setLoginStatusData({ message: "", code: 0 });
@@ -221,7 +244,12 @@ export default function SignInUp() {
             })
           );
           AppCtx.setLoginStatusData({ message: "Login Success", code: 200 });
-          navigate("/HomePage", { replace: true });
+          await loadConfigParameters(res.data.token);
+          var path = "/HomePage";
+
+          const indexRoute = await getIndex(res.data.token);
+          if (indexRoute !== null) path += "/" + indexRoute;
+          navigate(path, { replace: true });
         }
       } catch (ex: any) {
         handleError(ex);
