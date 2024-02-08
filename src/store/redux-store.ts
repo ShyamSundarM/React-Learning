@@ -9,6 +9,7 @@ import {
 import storage from "redux-persist/lib/storage";
 import { User } from "../context/app-context";
 import CryptoJS from "crypto-js";
+import dbConfigSlice, { DbConfigType } from "./db-config-slice";
 
 const initialState = { count: 0 };
 interface State {
@@ -39,6 +40,12 @@ const persistConfig: PersistConfig<AuthStateType, any, any, any> = {
   transforms: [encrypt],
 };
 
+const dbPersistConfig: PersistConfig<DbConfigType, any, any, any> = {
+  key: "configs",
+  storage,
+  transforms: [encrypt],
+};
+
 const reducerFn = (state: State = initialState, action: Action) => {
   switch (action.type) {
     case "inc":
@@ -52,6 +59,7 @@ const store = configureStore({
   reducer: {
     //test: persistReducer(persistConfig, reducerFn),
     auth: persistReducer(persistConfig, authSlice.reducer),
+    dbConfig: persistReducer(dbPersistConfig, dbConfigSlice.reducer),
   },
   middleware: (middleware) => middleware({ serializableCheck: false }),
 });
