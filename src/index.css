@@ -37,3 +37,7 @@ nav {
 thead tr th {
   font-weight: bold !important;
 }
+
+/* fieldset.MuiOutlinedInput-notchedOutline {
+  border: none;
+} */

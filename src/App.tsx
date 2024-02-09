@@ -19,6 +19,7 @@ import { useContext, useEffect } from "react";
 import { AppContext, User } from "./context/app-context";
 import OrderList from "./components/FoodOrder/OrderList";
 import FoodOrder from "./components/FoodOrder/FoodOrder";
+import Settings from "./components/FoodOrder/Settings";
 
 function SlideTransition(props: SlideProps) {
   return <Slide {...props} direction="down" />;
@@ -47,6 +48,7 @@ const router = createBrowserRouter(
         >
           <Route index element={<FoodOrder />} />
           <Route path="Orders" element={<OrderList />} />
+          <Route path="Settings" element={<Settings />} />
         </Route>
       </Route>
     </>
