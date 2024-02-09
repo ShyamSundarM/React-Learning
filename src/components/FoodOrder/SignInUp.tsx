@@ -1,4 +1,4 @@
-import { BaseSyntheticEvent, useContext, useState } from "react";
+import { BaseSyntheticEvent, useContext, useEffect, useState } from "react";
 import styles from "./SignInUp.module.css";
 import useInput from "./hooks/useInput";
 import axios from "axios";
@@ -9,8 +9,8 @@ import { getCurrentURL } from "./Shared";
 import { AppContext } from "../../context/app-context";
 import { AnimatePresence, motion } from "framer-motion";
 import { FoodContext } from "../../context/food-context";
-import { authActions } from "../../store/auth-slice";
-import { useDispatch } from "react-redux";
+import { AuthStateType, authActions } from "../../store/auth-slice";
+import { useDispatch, useSelector } from "react-redux";
 import { DbConfigType, dbConfigActions } from "../../store/db-config-slice";
 
 export type ValidatorFnObj = {
@@ -22,6 +22,16 @@ export type ValidatorFnObj = {
 };
 
 export default function SignInUp() {
+  const authState = useSelector((s: any) => s.auth) as AuthStateType;
+  useEffect(() => {
+    if (
+      authState.user !== null &&
+      authState.token !== null &&
+      authState.expiresIn !== null
+    ) {
+      navigate("/HomePage");
+    }
+  });
   const dispatch = useDispatch();
   const [queryParams] = useSearchParams();
   const AppCtx = useContext(AppContext);
@@ -213,7 +223,7 @@ export default function SignInUp() {
   }
   async function getIndex(token: string): Promise<string> {
     var resp = await axios.get<string>(
-      getCurrentURL() + "/DbConfig/GetConfigValue/Index_HomePage",
+      getCurrentURL() + "/RouteConfig/IndexRoute/HomePage",
       {
         headers: { Authorization: `Bearer ${token}` },
       }

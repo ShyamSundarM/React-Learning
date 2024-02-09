@@ -1,0 +1,13 @@
+.Root {
+  padding: 10px 10px;
+}
+
+.HomePageContainer {
+  display: flex;
+  align-items: center;
+}
+
+.HPDropDown {
+  margin-left: 10px;
+  border-color: red;
+}

@@ -38,6 +38,18 @@ export default function Header() {
               Orders
             </NavLink>
           )}
+          {user.role === UserRole.Admin && (
+            <NavLink
+              className={({ isActive }) =>
+                isActive
+                  ? `${styles.HeaderItem} ${styles.HeaderItemActive}`
+                  : styles.HeaderItem
+              }
+              to="Settings"
+            >
+              Settings
+            </NavLink>
+          )}
         </div>
         <div className={styles.cartPos}>
           <Cart key={!foodCtx.modalOpen ? totalCount : ""} />
